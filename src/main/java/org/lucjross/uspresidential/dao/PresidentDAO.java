@@ -8,12 +8,7 @@ import java.util.List;
 /**
  * Created by lucas on 11/21/2014.
  */
-public interface PresidentDAO {
+public interface PresidentDAO extends DAO<President> {
 
-
-    public void setDataSource(DataSource ds);
-
-    public President getPresident(Integer id);
-
-    public List<President> getPresidentList();
+    public List<President> getPresidents();
 }

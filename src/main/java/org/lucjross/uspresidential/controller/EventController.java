@@ -1,5 +1,7 @@
 package org.lucjross.uspresidential.controller;
 
+import com.wordnik.swagger.annotations.ApiOperation;
+import org.lucjross.uspresidential.dao.AbstractDAO;
 import org.lucjross.uspresidential.dao.EventDAO;
 import org.lucjross.uspresidential.model.Event;
 import org.lucjross.uspresidential.model.President;
@@ -17,6 +19,9 @@ import java.util.List;
 @RestController
 public class EventController {
 
+    static final String MIN_DATE = "1600-01-01";
+    static final String MAX_DATE = "2400-01-01";
+
     @Autowired
     private EventDAO eventDAO;
 
@@ -33,10 +38,27 @@ public class EventController {
         return event;
     }
 
+    @RequestMapping(value="/events-for-period", method=RequestMethod.GET)
+    @ApiOperation(value="Get events for period",
+            notes="Gets all of a president's events that occurred at least partially during the given" +
+            " date range. Events missing a start date or end date will be excluded.")
+    public List<Event> getEventsByPresidentForPeriod(
+            @RequestParam("president-id") Integer presidentID,
+            @RequestParam(value="start-date", defaultValue=MIN_DATE) String startDate,
+            @RequestParam(value="end-date", defaultValue=MAX_DATE) String endDate) {
+        President president = new President();
+        president.setID(presidentID);
+        java.sql.Date start = java.sql.Date.valueOf(startDate);
+        java.sql.Date end = java.sql.Date.valueOf(endDate);
+        List<Event> events = eventDAO.getEventsForPeriod(president, start, end);
+        return events;
+    }
+
     /**
      * Returns all events for a given president.
      *
      * @param  presidentID  A {@link President} ID.
+     *
      * @return  A map of event IDs to {@link Event}s.
      */
     @RequestMapping(value="/events", method=RequestMethod.GET)

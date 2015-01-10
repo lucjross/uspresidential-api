@@ -13,9 +13,9 @@ public interface DAO<T> {
      */
     public int create(T t);
 
-    public T find(Object id);
+    public T find(Integer id);
 
     public T update(T t);
 
-    public void delete(Object id);
+    public void delete(Integer id);
 }

@@ -42,7 +42,7 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
     }
 
     @Override
-    public Vote find(Object id) {
+    public Vote find(Integer id) {
         String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
         Vote vote = jdbcTemplate.queryForObject(
                 sql, new Object[] {id}, newMapper());
@@ -55,7 +55,7 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
     }
 
     @Override
-    public void delete(Object id) {
+    public void delete(Integer id) {
         String sql = "DELETE FROM " + TABLE + " WHERE id=?";
         jdbcTemplate.update(sql, id);
     }

@@ -19,13 +19,13 @@ public class PresidentDAOTest extends TestCase {
 
     @Test
     public void testList() {
-        List<President> presidents = presidentDAO.getPresidentList();
+        List<President> presidents = presidentDAO.getPresidents();
         Assert.assertTrue(presidents.size() > 40);
     }
 
     @Test
     public void testGet() {
-        President obama = presidentDAO.getPresident(44);
+        President obama = presidentDAO.find(44);
         Assert.assertEquals(obama.getLastname(), "Obama");
         Assert.assertEquals(obama.getFirstname(), "Barack");
     }

@@ -12,4 +12,7 @@ import java.util.List;
 public interface EventDAO extends DAO<Event> {
 
     public List<Event> getEvents(President president);
+
+    public List<Event> getEventsForPeriod(
+            President president, java.sql.Date start, java.sql.Date end);
 }
