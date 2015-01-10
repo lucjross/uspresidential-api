@@ -1,5 +1,6 @@
 package org.lucjross.uspresidential;
 
+import org.ajar.swaggermvcui.SwaggerSpringMvcUi;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -17,6 +18,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.Resource;
 import javax.sql.*;
@@ -29,24 +31,28 @@ import java.util.Collections;
 @EnableAutoConfiguration
 @Configuration
 @ComponentScan
-//@Import(value=SwaggerConfig.class)
+@Import(value=SwaggerConfig.class)
 public class Application extends SpringBootServletInitializer {
 
     static final ApplicationListener<ApplicationEnvironmentPreparedEvent> appEnvPreparedListener =
-            (ApplicationEnvironmentPreparedEvent event) -> {
-        event.getSpringApplication().setSources(Collections.singleton(SwaggerConfig.class));
-    };
+            new ApplicationListener<ApplicationEnvironmentPreparedEvent>() {
+
+                @Override
+                public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
+                    event.getSpringApplication().setSources(Collections.singleton(SwaggerConfig.class));
+                }
+            };
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        builder.application().addListeners(appEnvPreparedListener);
+//        builder.application().addListeners(appEnvPreparedListener);
         return builder.sources(Application.class);
     }
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.setWebEnvironment(true);
-        app.addListeners(appEnvPreparedListener);
+//        app.addListeners(appEnvPreparedListener);
         app.run(args);
     }
 
@@ -71,5 +77,4 @@ public class Application extends SpringBootServletInitializer {
                 new PoolingDataSource<>(connectionPool);
         return dataSource;
     }
-
 }
