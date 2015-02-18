@@ -3,14 +3,22 @@ package org.lucjross.uspresidential;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -22,18 +30,18 @@ import javax.sql.DataSource;
 @EnableAutoConfiguration
 @Configuration
 @ComponentScan
-@Import(value=SwaggerConfig.class)
+@Import(SwaggerConfig.class)
 public class Application extends SpringBootServletInitializer {
-
-//    @Override
-//    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-//        return builder.sources(Application.class);
-//    }
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.setWebEnvironment(true);
         app.run(args);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
     }
 
     @Resource
@@ -56,5 +64,32 @@ public class Application extends SpringBootServletInitializer {
         PoolingDataSource<PoolableConnection> dataSource =
                 new PoolingDataSource<>(connectionPool);
         return dataSource;
+    }
+
+    @Bean
+    public ApplicationSecurity applicationSecurity() {
+        return new ApplicationSecurity();
+    }
+
+    @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+    protected static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
+
+        @Autowired
+        private DataSource dataSource;
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                    .authorizeRequests().anyRequest().authenticated()
+                    .and().httpBasic().realmName("uspresidential-api");
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth
+                    .jdbcAuthentication()
+                    .passwordEncoder(new BCryptPasswordEncoder())
+                    .dataSource(dataSource);
+        }
     }
 }

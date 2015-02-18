@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.util.Objects;
+
 
 /**
  * Created by lucas on 12/31/2014.
@@ -18,16 +20,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableSwagger
 public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
-    private SpringSwaggerConfig springSwaggerConfig;
-
     @Autowired
-    public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
-        this.springSwaggerConfig = springSwaggerConfig;
-    }
+    private SpringSwaggerConfig springSwaggerConfig;
 
     @Bean
     public SwaggerSpringMvcPlugin customImplementation() {
-        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(
+        return new SwaggerSpringMvcPlugin(springSwaggerConfig).apiInfo(
                 apiInfo());
     }
 
@@ -40,22 +38,6 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
                 "[license type]",
                 "[license URL]");
     }
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler(WEB_JAR_RESOURCE_PATTERNS)
-//                .addResourceLocations(WEB_JAR_RESOURCE_LOCATION)
-//                .setCachePeriod(0);
-//    }
-//
-//    @Override
-//    public void configureViewResolvers(ViewResolverRegistry registry) {
-//        System.out.println("configuring view resolvers");
-////        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-////        resolver.setPrefix(WEB_JAR_VIEW_RESOLVER_PREFIX);
-////        resolver.setSuffix(WEB_JAR_VIEW_RESOLVER_SUFFIX);
-////        registry.viewResolver(resolver);
-//        registry.jsp(WEB_JAR_VIEW_RESOLVER_PREFIX, WEB_JAR_VIEW_RESOLVER_SUFFIX);
-//    }
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

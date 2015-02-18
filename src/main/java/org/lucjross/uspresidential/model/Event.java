@@ -1,13 +1,15 @@
 package org.lucjross.uspresidential.model;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * Created by lucas on 11/23/2014.
  */
 public class Event implements Serializable {
+
     static final long serialVersionUID = 1L;
+
+    public static final String TABLE = "p_events";
 
     private int ID;
     private String description;
@@ -16,8 +18,8 @@ public class Event implements Serializable {
     private String importance;
     private String category;
     private String summary;
-    private Date start;
-    private Date end;
+    private java.sql.Date start;
+    private java.sql.Date end;
     private String wiki_link;
 
     public int getID() {
@@ -76,19 +78,19 @@ public class Event implements Serializable {
         this.summary = summary;
     }
 
-    public Date getStart() {
+    public java.sql.Date getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(java.sql.Date start) {
         this.start = start;
     }
 
-    public Date getEnd() {
+    public java.sql.Date getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(java.sql.Date end) {
         this.end = end;
     }
 
