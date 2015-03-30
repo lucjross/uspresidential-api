@@ -1,4 +1,4 @@
-package org.lucjross.uspresidential.controller;
+package org.lucjross.uspresidential.controller.rest;
 
 import org.lucjross.uspresidential.dao.PresidentDAO;
 import org.lucjross.uspresidential.model.President;

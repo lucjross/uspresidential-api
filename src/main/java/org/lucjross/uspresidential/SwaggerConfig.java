@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.util.Objects;
-
 
 /**
  * Created by lucas on 12/31/2014.
@@ -25,8 +23,8 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public SwaggerSpringMvcPlugin customImplementation() {
-        return new SwaggerSpringMvcPlugin(springSwaggerConfig).apiInfo(
-                apiInfo());
+        return new SwaggerSpringMvcPlugin(springSwaggerConfig)
+                .apiInfo(apiInfo());
     }
 
     private ApiInfo apiInfo() {

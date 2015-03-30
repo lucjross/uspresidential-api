@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Created by lucas on 2/16/2015.
  */
 @Controller
-@RequestMapping("/")
-public class RootController {
+public class ApiDocController {
 
-    @RequestMapping
+    @RequestMapping("/api")
     @ApiIgnore
     public String index() {
         return "sdoc.jsp";

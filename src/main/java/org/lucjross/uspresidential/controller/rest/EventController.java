@@ -1,4 +1,4 @@
-package org.lucjross.uspresidential.controller;
+package org.lucjross.uspresidential.controller.rest;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import org.lucjross.uspresidential.dao.AbstractDAO;
