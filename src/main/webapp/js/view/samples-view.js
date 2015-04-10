@@ -1,7 +1,7 @@
-define([ 'backbone', 'resthub', 'collection/samples', 'hbs!template/samples' ],
-function (Backbone, Resthub, Samples, samplesTemplate) {
+define(['backbone', 'collection/samples', 'stache!template/samples'],
+function (Backbone, Samples, samplesTemplate) {
     
-    var SamplesView = Resthub.View.extend({
+    var SamplesView = Backbone.View.extend({
         
         // Define view template
         template: samplesTemplate,
@@ -14,7 +14,7 @@ function (Backbone, Resthub, Samples, samplesTemplate) {
             this.listenTo(this.collection, 'sync', this.render);
             
             // Request unpaginated URL
-            this.collection.fetch({ data: { page: 'no'} });
+//            this.collection.fetch({ data: { page: 'no'} });
         }
 
     });

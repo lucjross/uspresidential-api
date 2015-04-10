@@ -4,7 +4,8 @@ function (Backbone, AboutView, SamplesView) {
     var AppRouter = Backbone.Router.extend({
 
         initialize: function() {
-            Backbone.history.start({ pushState: true, root: "/" });
+            Backbone.history.start({ root: "/" });
+            console.log('initialized ', this);
         },
 
         routes:{
@@ -17,7 +18,8 @@ function (Backbone, AboutView, SamplesView) {
             new SamplesView({ root: $('#main') });
         },
         about:function () {
-            new AboutView({ root: $('#main') });
+            console.log('about');
+            new AboutView();
         }
         
     });

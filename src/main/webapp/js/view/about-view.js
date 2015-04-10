@@ -1,14 +1,19 @@
-define([ 'backbone', 'resthub', 'hbs!template/about'],
-function (Backbone, Resthub, aboutTemplate) {
+define([ 'backbone', 'stache!template/about'],
+function (Backbone, template) {
     
-    var AboutView = Resthub.View.extend({
-        
-        // Define view template
-        template: aboutTemplate,
+    var AboutView = Backbone.View.extend({
+
+        el: '#main',
         
         initialize:function () {
             // Render the view
             this.render();
+        },
+
+        render: function () {
+            this.$el.html(template({
+                something: 'SOMETHING'
+            }));
         }
 
     });
