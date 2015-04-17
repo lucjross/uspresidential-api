@@ -8,38 +8,44 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
+    <nav class="navbar navbar-inverse navbar-static-top active">
         <div class="container">
-          <a class="brand" href="#">Presidential Ranker</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="home">Home</a></li>
-              <li><a href="ranker">Ranker</a></li>
-              <li><a href="stats">Statistics</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="forum">Forum</a></li>
-            </ul>
-          </div>
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                        aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Presidential Ranker</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#ranker">Ranker</a></li>
+                    <li><a href="#stats">Statistics</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#forum">Forum</a></li>
+                </ul>
+            </div>
         </div>
-      </div>
-    </div>
+    </nav>
 
-    <div class="container">
+    <div id="main"></div>
 
-      <div id="main"> </div>
-      
-    </div>
-      
     <!-- Placed at the end of the document so the pages load faster -->
     <script data-main="js/main" src="js/lib/require.js"></script>
-  </body>
+</body>
 </html>

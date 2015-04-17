@@ -5,7 +5,7 @@ function (Backbone, AboutView, SamplesView) {
 
         initialize: function() {
             Backbone.history.start({ root: "/" });
-            console.log('initialized ', this);
+
         },
 
         routes:{
@@ -14,11 +14,7 @@ function (Backbone, AboutView, SamplesView) {
             'about': 'about'
         },
 
-        home:function () {
-            new SamplesView({ root: $('#main') });
-        },
         about:function () {
-            console.log('about');
             new AboutView();
         }
         
