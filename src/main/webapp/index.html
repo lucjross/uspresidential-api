@@ -29,21 +29,44 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Presidential Ranker</a>
+                <a class="navbar-brand" href="#/ranker/vote">Presidential Ranker</a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#ranker">Ranker</a></li>
-                    <li><a href="#stats">Statistics</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#forum">Forum</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">Ranker <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#/ranker/vote">Vote</a></li>
+                            <li><a href="#/ranker/statistics">Statistics</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">About <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#/about/blog">Blog</a></li>
+                            <li><a href="#/about/faq">FAQ</a></li>
+                            <li><a href="#/about/contact">Contact Us</a></li>
+                            <li><a href="#/about/donate">Donate</a></li>
+                            <li><a href="#/about/contribute">Contribute</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#/forum">Forum</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class=""><a href="#/signin">Sign In / Out / ?</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div id="main"></div>
+    <div class="container">
+        <div id="main"></div>
+    </div>
+
+    <div id="base-modal" class="modal fade hide"></div>
 
     <!-- Placed at the end of the document so the pages load faster -->
     <script data-main="js/main" src="js/lib/require.js"></script>

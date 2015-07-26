@@ -20,22 +20,24 @@ public class EventDAOTest extends TestCase {
 
     @Test
     public void testGet() {
-        Event event = eventDAO.find(3);
-        Assert.assertTrue(event.getDescription().contains("Refused"));
+        Event event = eventDAO.find(1);
+        Assert.assertTrue(event.getDescription().equals("desc1"));
     }
 
     @Test
     public void testListByPresident() {
         President president = new President();
         president.setID(1);
-        List<Event> gWashingtonEvents = eventDAO.getEvents(president);
-        for (Event event : gWashingtonEvents)
-        {
-            Assert.assertTrue(event.getDescription().length() > 0);
-            if (event.getEnd() != null)
-            {
-                Assert.assertTrue(event.getEnd().compareTo(Date.valueOf("1800-01-01")) < 0);
-            }
-        }
+        List<Event> guy1Events = eventDAO.getEvents(president);
+        Assert.assertEquals("desc1", guy1Events.get(0).getDescription());
+        Assert.assertEquals(1, guy1Events.get(0).getPresident_id());
+        Assert.assertEquals(10, guy1Events.get(0).getWeight());
+        Assert.assertEquals("major", guy1Events.get(0).getImportance());
+        Assert.assertEquals("foreign", guy1Events.get(0).getCategory());
+        Assert.assertEquals("summary1", guy1Events.get(0).getSummary());
+        Assert.assertEquals(Date.valueOf("1970-1-1"), guy1Events.get(0).getStart());
+        Assert.assertEquals(Date.valueOf("1970-1-2"), guy1Events.get(0).getEnd());
+        Assert.assertEquals("url1", guy1Events.get(0).getWiki_link());
+
     }
 }

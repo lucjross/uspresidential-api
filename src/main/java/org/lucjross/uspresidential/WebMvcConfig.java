@@ -10,16 +10,17 @@ import static org.ajar.swaggermvcui.SwaggerSpringMvcUi.*;
 /**
  * Created by lucas on 1/8/2015.
  */
-//@Configuration
+@Configuration
 //@EnableWebMvc
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    @Override
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
 //        registry.addResourceHandler(WEB_JAR_RESOURCE_PATTERNS)
 //                .addResourceLocations(WEB_JAR_RESOURCE_LOCATION)
 //                .setCachePeriod(0);
-//    }
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+    }
 //
 //    @Bean
 //    public InternalResourceViewResolver getInternalResourceViewResolver() {

@@ -79,8 +79,9 @@ public class Application extends SpringBootServletInitializer {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http
-                    .authorizeRequests().anyRequest().authenticated()
+            http.authorizeRequests()
+                    .antMatchers("/api/**").authenticated()
+                    .antMatchers("/forum").authenticated()
                     .and().httpBasic().realmName("uspresidential-api");
         }
 

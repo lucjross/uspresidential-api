@@ -25,7 +25,7 @@ require.config({
         backbone: 'lib/backbone-min',
         text: 'lib/text',
         i18next: 'lib/i18next.min',
-        'bootstrap': 'lib/bootstrap',
+        bootstrap: 'lib/bootstrap.min',
         template: '../template',
         mustache: 'lib/mustache.min',
         stache: 'lib/stache'
@@ -33,4 +33,4 @@ require.config({
 });
 
 // Load our app module and pass it to our definition function
-require(['app']);
+require(['bootstrap', 'app']);

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ApiDocController {
 
-    @RequestMapping("/api")
+    @RequestMapping("/api-ui")
     @ApiIgnore
     public String index() {
         return "sdoc.jsp";

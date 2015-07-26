@@ -1,7 +1,7 @@
-define([ 'backbone', 'stache!template/about'],
-function (Backbone, template) {
+define(['backbone', 'stache!template/about_faq'],
+function (Backbone, Template) {
     
-    var AboutView = Backbone.View.extend({
+    var About_FAQView = Backbone.View.extend({
 
         el: '#main',
         
@@ -11,11 +11,11 @@ function (Backbone, template) {
         },
 
         render: function () {
-            this.$el.html(template({
+            this.$el.html(Template({
                 something: 'SOMETHING'
             }));
         }
 
     });
-    return AboutView;
+    return About_FAQView;
 });

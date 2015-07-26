@@ -1,7 +1,5 @@
 package org.lucjross.uspresidential;
 
-import org.springframework.stereotype.Component;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -9,9 +7,10 @@ import java.io.IOException;
 /**
  * Created by lucas on 4/16/2015.
  */
-@Component
+//@Component
 public class SimpleCORSFilter implements Filter {
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
@@ -22,8 +21,10 @@ public class SimpleCORSFilter implements Filter {
         chain.doFilter(req, res);
     }
 
+    @Override
     public void init(FilterConfig filterConfig) {}
 
+    @Override
     public void destroy() {}
 
 }
