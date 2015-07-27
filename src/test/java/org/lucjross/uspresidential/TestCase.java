@@ -39,31 +39,6 @@ public abstract class TestCase {
     @Autowired
     ApplicationContext appContext;
 
-    @Before
-    public void setUp() throws Exception {
-
-        // don't want to mess with the real DB
-        String userName = jdbcTemplate.getDataSource().getConnection().getMetaData().getUserName();
-        Assert.assertTrue(userName.endsWith("@localhost") || userName.endsWith("@127.0.0.1"));
-
-        // reset the schema
-        executeScript("classpath:dropSchema.sql");
-        executeScript("classpath:createSchema.sql");
-
-        // insert data
-        update("classpath:insertPresident.sql", new Object[] {"guy1", "test1", 1, "url1"});
-        update("classpath:insertPresident.sql", new Object[] {"guy2", "test2", 2, "url2"});
-
-        update("classpath:insertEvent.sql", new Object[] {
-                "desc1", 1, 10, "major", "foreign", "summary1", Date.valueOf("1970-1-1"), Date.valueOf("1970-1-2"), "url1"});
-        update("classpath:insertEvent.sql", new Object[] {
-                "desc2", 2, 5, "minor", "domestic", "summary2", Date.valueOf("1970-1-3"), Date.valueOf("1970-1-4"), "url2"});
-        update("classpath:insertEvent.sql", new Object[] {
-                "desc3", 1, 0, "major", "appointment", "summary3", Date.valueOf("1970-1-5"), Date.valueOf("1970-1-6"), "url3"});
-        update("classpath:insertEvent.sql", new Object[] {
-                "desc4", 2, 5, "minor", "misc", "summary4", Date.valueOf("1970-1-7"), Date.valueOf("1970-1-8"), "url4"});
-    }
-
     private void update(String resourcePath, Object[] params) throws Exception {
         Resource sqlResource = appContext.getResource(resourcePath);
         String sql = new String(FileCopyUtils.copyToByteArray(sqlResource.getInputStream()));

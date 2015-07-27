@@ -1,8 +1,11 @@
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0
+;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0
+;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES'
+;
 
 -- -----------------------------------------------------
 -- Schema mydb
@@ -10,12 +13,16 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema presidents
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `presidents`
+;
 
 -- -----------------------------------------------------
 -- Schema presidents
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `presidents` DEFAULT CHARACTER SET utf8 ;
-USE `presidents` ;
+CREATE SCHEMA IF NOT EXISTS `presidents` DEFAULT CHARACTER SET utf8
+;
+USE `presidents`
+;
 
 -- -----------------------------------------------------
 -- Table `presidents`.`users`
@@ -26,7 +33,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`users` (
   `enabled` TINYINT(1) NOT NULL,
   PRIMARY KEY (`username`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
+DEFAULT CHARACTER SET = latin1
+;
 
 
 -- -----------------------------------------------------
@@ -40,7 +48,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`authorities` (
     FOREIGN KEY (`username`)
     REFERENCES `presidents`.`users` (`username`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
+DEFAULT CHARACTER SET = latin1
+;
 
 
 -- -----------------------------------------------------
@@ -56,7 +65,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`country` (
   `phonecode` INT(5) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8
+;
 
 
 -- -----------------------------------------------------
@@ -70,7 +80,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`p_presidents` (
   `wiki_link` TEXT NOT NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8
+;
 
 
 -- -----------------------------------------------------
@@ -96,7 +107,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`p_events` (
     FOREIGN KEY (`president_id`)
     REFERENCES `presidents`.`p_presidents` (`ID`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8
+;
 
 
 -- -----------------------------------------------------
@@ -112,7 +124,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`p_users` (
   `privilege` TINYINT(4) NOT NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8
+;
 
 
 -- -----------------------------------------------------
@@ -144,7 +157,8 @@ CREATE TABLE IF NOT EXISTS `presidents`.`p_userdetail` (
     FOREIGN KEY (`country_residence`)
     REFERENCES `presidents`.`country` (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8
+;
 
 
 -- -----------------------------------------------------
@@ -170,9 +184,13 @@ CREATE TABLE IF NOT EXISTS `presidents`.`p_votes` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8
+;
 
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SET SQL_MODE=@OLD_SQL_MODE
+;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS
+;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS
+;
