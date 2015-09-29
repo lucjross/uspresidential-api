@@ -24,7 +24,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
     @Bean
     public SwaggerSpringMvcPlugin customImplementation() {
         return new SwaggerSpringMvcPlugin(springSwaggerConfig)
-                .includePatterns("^((?!error).)*$") // (don't include error-controller)
+                .includePatterns("^" + RestApiConfig.BASE_URI + "/.+") // (don't include error-controller)
                 .apiInfo(apiInfo());
     }
 

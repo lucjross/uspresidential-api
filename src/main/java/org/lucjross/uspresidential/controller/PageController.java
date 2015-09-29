@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 @ApiIgnore
+@RequestMapping("/")
 public class PageController {
 
-    @RequestMapping("/")
     public String index() {
         return "index.html";
     }

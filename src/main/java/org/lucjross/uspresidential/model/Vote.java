@@ -9,26 +9,18 @@ import java.sql.Timestamp;
 public class Vote implements Serializable {
     static final long serialVersionUID = 1L;
 
-    private int id;
-    private int user_id;
+    private String user_username;
     private int event_id;
-    private short vote;
+    private String vote;
+    private short weight;
     private Timestamp timestamp;
 
-    public int getId() {
-        return id;
+    public String getUser_username() {
+        return user_username;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUser_username(String user_username) {
+        this.user_username = user_username;
     }
 
     public int getEvent_id() {
@@ -39,12 +31,20 @@ public class Vote implements Serializable {
         this.event_id = event_id;
     }
 
-    public short getVote() {
+    public String getVote() {
         return vote;
     }
 
-    public void setVote(short vote) {
+    public void setVote(String vote) {
         this.vote = vote;
+    }
+
+    public short getWeight() {
+        return weight;
+    }
+
+    public void setWeight(short weight) {
+        this.weight = weight;
     }
 
     public Timestamp getTimestamp() {

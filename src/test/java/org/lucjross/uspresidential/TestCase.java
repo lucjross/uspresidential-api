@@ -23,7 +23,7 @@ import java.util.Arrays;
  * Created by lucas on 11/23/2014.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes=Application.class)
+@SpringApplicationConfiguration(classes=TestApplication.class)
 @WebAppConfiguration
 public abstract class TestCase {
 
@@ -38,23 +38,6 @@ public abstract class TestCase {
 
     @Autowired
     ApplicationContext appContext;
-
-    private void update(String resourcePath, Object[] params) throws Exception {
-        Resource sqlResource = appContext.getResource(resourcePath);
-        String sql = new String(FileCopyUtils.copyToByteArray(sqlResource.getInputStream()));
-        LOGGER.info("Executing sql=[" + sql + "], params=[" + Arrays.toString(params) + "]");
-        jdbcTemplate.update(sql, params);
-    }
-
-    private void executeScript(String resourcePath) throws Exception {
-        Resource sqlResource = appContext.getResource(resourcePath);
-        String multiSql = new String(FileCopyUtils.copyToByteArray(sqlResource.getInputStream()));
-        String[] splitSql = multiSql.split(";(\\r\\n?|\\n)");
-        for (String sql : splitSql) {
-            LOGGER.info("Executing sql=[" + sql + "]");
-            jdbcTemplate.execute(sql);
-        }
-    }
 
     @After
     public void tearDown() {

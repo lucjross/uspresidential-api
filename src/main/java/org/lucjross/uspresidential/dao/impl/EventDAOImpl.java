@@ -17,16 +17,16 @@ import java.util.List;
 @Repository
 public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
 
-    private static final String TABLE = "p_events";
+    private static final String TABLE = "events";
 
     @Override
-    public int create(Event event) {
+    public void create(Event event) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Event find(Integer id) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE ID=?";
+        String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
         Event event = jdbcTemplate.queryForObject(sql, new Object[] {id}, newMapper());
         return event;
     }
@@ -44,7 +44,7 @@ public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
     @Override
     public List<Event> getEvents(President president) {
         String sql = "SELECT * FROM " + TABLE + " WHERE president_id=?";
-        Object[] o = new Integer[] { president.getID() };
+        Object[] o = new Integer[] { president.getId() };
         List<Event> events = jdbcTemplate.query(sql, o, newMapper());
         return events;
     }
@@ -54,7 +54,7 @@ public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
             President president, java.sql.Date start, java.sql.Date end) {
         String sql = "SELECT * FROM " + TABLE + " WHERE president_id = ?" +
                 " AND NOT (start > ? OR end < ?)";
-        Object[] o = new Object[] { president.getID(), end, start };
+        Object[] o = new Object[] { president.getId(), end, start };
         List<Event> events = jdbcTemplate.query(sql, o, newMapper());
         return events;
 

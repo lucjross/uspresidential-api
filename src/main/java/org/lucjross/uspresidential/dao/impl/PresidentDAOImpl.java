@@ -15,17 +15,17 @@ import java.util.List;
 @Repository
 public class PresidentDAOImpl extends AbstractDAO<President> implements PresidentDAO {
 
-    private static final String TABLE = "p_presidents";
+    static final String TABLE = "presidents";
 
     @Override
     public President find(Integer id) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE ID=?";
+        String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
         President president = jdbcTemplate.queryForObject(sql, new Object[] {id}, newMapper());
         return president;
     }
 
     @Override
-    public int create(President president) {
+    public void create(President president) {
         throw new UnsupportedOperationException();
     }
 

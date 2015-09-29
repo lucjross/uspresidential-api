@@ -8,18 +8,18 @@ import java.io.Serializable;
 public class President implements Serializable {
     static final long serialVersionUID = 1L;
 
-    private int ID;
+    private int id;
     private String lastname;
     private String firstname;
     private int order;
     private String wiki_link;
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLastname() {
@@ -57,7 +57,7 @@ public class President implements Serializable {
     @Override
     public String toString() {
         return "President{" +
-                "ID=" + ID +
+                "id=" + id +
                 ", lastname='" + lastname + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", order=" + order +

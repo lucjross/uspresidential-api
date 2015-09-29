@@ -11,7 +11,7 @@ public class Event implements Serializable {
 
     public static final String TABLE = "p_events";
 
-    private int ID;
+    private int id;
     private String description;
     private int president_id;
     private short weight;
@@ -22,12 +22,12 @@ public class Event implements Serializable {
     private java.sql.Date end;
     private String wiki_link;
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDescription() {

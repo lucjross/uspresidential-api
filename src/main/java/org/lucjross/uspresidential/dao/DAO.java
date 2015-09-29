@@ -11,7 +11,7 @@ public interface DAO<T> {
      * @param t  An instance of {@link T}.
      * @return  The ID of the inserted row.
      */
-    public int create(T t);
+    public void create(T t);
 
     public T find(Integer id);
 

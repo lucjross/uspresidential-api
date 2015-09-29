@@ -1,14 +1,14 @@
 package org.lucjross.uspresidential.dao;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.lucjross.uspresidential.TestCase;
 import org.lucjross.uspresidential.model.Vote;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by lucas on 12/28/2014.
@@ -19,20 +19,24 @@ public class VoteDAOTest extends TestCase {
     private VoteDAO voteDAO;
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception {
+        voteDAO.delete("user0");
+
         Vote vote1 = new Vote();
-        vote1.setUser_id(1);
-        vote1.setEvent_id(3);
-        vote1.setVote((short) 5);
-        vote1.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
-        int key1 = voteDAO.create(vote1);
-        voteDAO.delete(key1);
-        try {
-            vote1 = voteDAO.find(key1);
-            Assert.fail();
+        vote1.setUser_username("user0");
+        vote1.setEvent_id(1);
+        vote1.setVote("Yes");
+        vote1.setWeight((short) 5);
+        voteDAO.create(vote1);
+
+        Collection<Vote> votes = voteDAO.getVotes(1, "user0");
+        Assert.assertEquals(1, votes.size());
+        for (Vote v : votes) {
+            Assert.assertEquals("user0", v.getUser_username());
+            Assert.assertEquals(1, v.getEvent_id());
+            Assert.assertEquals("Yes", v.getVote());
+            Assert.assertEquals(5, v.getWeight());
+            Assert.assertNotNull(v.getTimestamp());
         }
-        catch (DataAccessException e) {}
-
-
     }
 }

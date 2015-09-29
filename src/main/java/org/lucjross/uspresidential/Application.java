@@ -3,6 +3,8 @@ package org.lucjross.uspresidential;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -33,6 +35,8 @@ import javax.sql.DataSource;
 @Import(SwaggerConfig.class)
 public class Application extends SpringBootServletInitializer {
 
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.setWebEnvironment(true);
@@ -49,11 +53,18 @@ public class Application extends SpringBootServletInitializer {
 
     @Bean
     public DataSource getDataSource() throws ClassNotFoundException {
-        Class.forName(env.getRequiredProperty("spring.datasource.driverClassName"));
 
-        String uri = env.getRequiredProperty("spring.datasource.url");
-        String user = env.getRequiredProperty("spring.datasource.username");
-        String pass = env.getRequiredProperty("spring.datasource.password");
+        final String dataSourcePropertySuffix = dataSourcePropertySuffix();
+        logger.info("dataSourcePropertySuffix=" + dataSourcePropertySuffix);
+
+        Class.forName(env.getRequiredProperty("datasource.driverClassName" + dataSourcePropertySuffix));
+
+        String uri =
+                env.getRequiredProperty("datasource.url" + dataSourcePropertySuffix) +
+                "/" +
+                env.getRequiredProperty("schema.name" + dataSourcePropertySuffix);
+        String user = env.getRequiredProperty("datasource.username" + dataSourcePropertySuffix);
+        String pass = env.getRequiredProperty("datasource.password" + dataSourcePropertySuffix);
         ConnectionFactory connectionFactory =
                 new DriverManagerConnectionFactory(uri, user, pass);
         PoolableConnectionFactory poolableConnectionFactory =
@@ -64,6 +75,10 @@ public class Application extends SpringBootServletInitializer {
         PoolingDataSource<PoolableConnection> dataSource =
                 new PoolingDataSource<>(connectionPool);
         return dataSource;
+    }
+
+    protected String dataSourcePropertySuffix() {
+        return "";
     }
 
     @Bean
@@ -80,9 +95,8 @@ public class Application extends SpringBootServletInitializer {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    .antMatchers("/api/**").authenticated()
-                    .antMatchers("/forum").authenticated()
-                    .and().httpBasic().realmName("uspresidential-api");
+                    .antMatchers("/presidents-api/**").authenticated()
+                    .and().httpBasic().realmName("presidents-api");
         }
 
         @Override

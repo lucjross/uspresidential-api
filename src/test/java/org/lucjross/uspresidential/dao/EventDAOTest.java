@@ -27,7 +27,7 @@ public class EventDAOTest extends TestCase {
     @Test
     public void testListByPresident() {
         President president = new President();
-        president.setID(1);
+        president.setId(1);
         List<Event> guy1Events = eventDAO.getEvents(president);
         Assert.assertEquals("desc1", guy1Events.get(0).getDescription());
         Assert.assertEquals(1, guy1Events.get(0).getPresident_id());

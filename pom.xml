@@ -23,6 +23,10 @@
         <!-- spring-boot -->
         <start-class>${project.groupId}.Application</start-class>
         <java.version>1.8</java.version>
+
+        <resourcesDir>src/main/resources</resourcesDir>
+        <resourcesDir.test>src/test/resources</resourcesDir.test>
+        <!--<replacer.outputDir>replaced</replacer.outputDir>-->
     </properties>
 
     <build>
@@ -44,6 +48,28 @@
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <!-- Load test properties from file -->
+
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <!--<file>${resourcesDir}/application.properties</file>-->
+                                <file>${resourcesDir.test}/application.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>sql-maven-plugin</artifactId>
                 <version>1.5</version>
 
@@ -56,10 +82,10 @@
                 </dependencies>
 
                 <configuration>
-                    <driver>com.mysql.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306/presidents</url>
-                    <username>root</username>
-                    <password></password>
+                    <driver>${datasource.driverClassName}</driver>
+                    <url>${datasource.url}</url>
+                    <username>${datasource.username}</username>
+                    <password>${datasource.password}</password>
 
                     <delimiterType>row</delimiterType>
                 </configuration>
@@ -73,9 +99,10 @@
                         </goals>
                         <configuration>
                             <autocommit>true</autocommit>
+                            <enableFiltering>true</enableFiltering>
                             <srcFiles>
-                                <srcFile>src/test/resources/createSchema.sql</srcFile>
-                                <srcFile>src/test/resources/insertData.sql</srcFile>
+                                <srcFile>${resourcesDir.test}/createSchema.sql</srcFile>
+                                <srcFile>${resourcesDir.test}/insertData.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>
@@ -86,7 +113,10 @@
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${resourcesDir}</directory>
+            </resource>
+            <resource>
+                <directory>${resourcesDir.test}</directory>
             </resource>
         </resources>
     </build>
@@ -168,14 +198,7 @@
         <dependency>
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
-            <version>0.9.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ajar</groupId>
-            <artifactId>swagger-spring-mvc-ui</artifactId>
-            <version>0.4</version>
-            <scope>compile</scope>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>

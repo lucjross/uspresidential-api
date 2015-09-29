@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,32 +22,21 @@ import java.util.List;
 @Repository
 public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
 
-    private static final String TABLE = "p_votes";
+    static final String TABLE = "votes";
 
     @Override
-    public int create(Vote vote) {
+    public void create(Vote vote) {
         String sql = "INSERT INTO " + TABLE +
-                " (user_id, event_id, vote, timestamp) " +
+                " (user_username, event_id, vote, weight) " +
                 " VALUES (?, ?, ?, ?)";
-        Object[] o = new Object[] {vote.getUser_id(), vote.getEvent_id(),
-                vote.getVote(), vote.getTimestamp()};
-        PreparedStatementCreatorFactory pscf =
-                new PreparedStatementCreatorFactory(sql,
-                        Types.INTEGER, Types.INTEGER, Types.TINYINT, Types.TIMESTAMP);
-        pscf.setGeneratedKeysColumnNames("id");
-        PreparedStatementCreator psc = pscf.newPreparedStatementCreator(o);
-        KeyHolder kh = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(psc, kh);
-        return kh.getKey().intValue();
+        Object[] o = new Object[] {vote.getUser_username(), vote.getEvent_id(),
+                vote.getVote(), vote.getWeight()};
+        jdbcTemplate.update(sql, o);
     }
 
     @Override
     public Vote find(Integer id) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
-        Vote vote = jdbcTemplate.queryForObject(
-                sql, new Object[] {id}, newMapper());
-        return vote;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -56,16 +46,30 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
 
     @Override
     public void delete(Integer id) {
-        String sql = "DELETE FROM " + TABLE + " WHERE id=?";
-        jdbcTemplate.update(sql, id);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Vote> getVotes(Event event) {
+    public Collection<Vote> getVotes(Event event) {
         String sql = "SELECT * FROM " + TABLE + " WHERE event_id=?";
-        Object[] o = new Object[] {event.getID()};
+        Object[] o = new Object[] {event.getId()};
         List<Vote> votes = jdbcTemplate.query(sql, o, newMapper());
         return votes;
+    }
+
+    @Override
+    public Collection<Vote> getVotes(int event_id, String user_username) {
+        String sql = "select * from " + TABLE + " where event_id = ? and user_username = ?";
+        Object[] o = new Object[] {event_id, user_username};
+        List<Vote> votes = jdbcTemplate.query(sql, o, newMapper());
+        return votes;
+    }
+
+    @Override
+    public void delete(String user_username) {
+        String sql = "delete from " + TABLE + " where user_username = ?";
+        Object[] o = new Object[] {user_username};
+        jdbcTemplate.update(sql, o);
     }
 
     private static RowMapper<Vote> newMapper()
