@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `${schema.name}`.`events` (
 -- -----------------------------------------------------
 -- Table `presidents`.`p_users`
 -- -----------------------------------------------------
---CREATE TABLE IF NOT EXISTS `${schema.name}`.`p_users` (
+-- CREATE TABLE IF NOT EXISTS `${schema.name}`.`p_users` (
 --  `ID` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 --  `user_login` VARCHAR(60) NOT NULL,
 --  `user_pass` VARCHAR(64) NOT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `${schema.name}`.`events` (
 --  `display_name` VARCHAR(250) NOT NULL,
 --  `privilege` TINYINT(4) NOT NULL,
 --  PRIMARY KEY (`ID`))
---;
+-- ;
 
 
 -- -----------------------------------------------------

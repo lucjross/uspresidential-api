@@ -1,18 +1,15 @@
 package org.lucjross.uspresidential.dao;
 
 import org.lucjross.uspresidential.model.Event;
-import org.lucjross.uspresidential.model.President;
 
-import javax.sql.DataSource;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created by lucas on 11/23/2014.
  */
 public interface EventDAO extends DAO<Event> {
 
-    public List<Event> getEvents(President president);
+    public Collection<Event> getEvents(int president_id);
 
-    public List<Event> getEventsForPeriod(
-            President president, java.sql.Date start, java.sql.Date end);
+    public Collection<Event> getEventsForPeriod(int president_id, java.sql.Date start, java.sql.Date end);
 }

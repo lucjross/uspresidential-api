@@ -53,7 +53,7 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
     public Collection<Vote> getVotes(Event event) {
         String sql = "SELECT * FROM " + TABLE + " WHERE event_id=?";
         Object[] o = new Object[] {event.getId()};
-        List<Vote> votes = jdbcTemplate.query(sql, o, newMapper());
+        List<Vote> votes = jdbcTemplate.query(sql, o, MAPPER);
         return votes;
     }
 
@@ -61,7 +61,7 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
     public Collection<Vote> getVotes(int event_id, String user_username) {
         String sql = "select * from " + TABLE + " where event_id = ? and user_username = ?";
         Object[] o = new Object[] {event_id, user_username};
-        List<Vote> votes = jdbcTemplate.query(sql, o, newMapper());
+        List<Vote> votes = jdbcTemplate.query(sql, o, MAPPER);
         return votes;
     }
 
@@ -72,8 +72,5 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
         jdbcTemplate.update(sql, o);
     }
 
-    private static RowMapper<Vote> newMapper()
-    {
-        return BeanPropertyRowMapper.newInstance(Vote.class);
-    }
+    private static final RowMapper<Vote> MAPPER = new BeanPropertyRowMapper<>(Vote.class, true);
 }

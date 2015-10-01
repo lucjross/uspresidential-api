@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,8 +27,8 @@ public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
 
     @Override
     public Event find(Integer id) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE id=?";
-        Event event = jdbcTemplate.queryForObject(sql, new Object[] {id}, newMapper());
+        String sql = "SELECT * FROM " + TABLE + " WHERE id = ?";
+        Event event = jdbcTemplate.queryForObject(sql, new Object[] {id}, MAPPER);
         return event;
     }
 
@@ -42,26 +43,24 @@ public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
     }
 
     @Override
-    public List<Event> getEvents(President president) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE president_id=?";
-        Object[] o = new Integer[] { president.getId() };
-        List<Event> events = jdbcTemplate.query(sql, o, newMapper());
+    public Collection<Event> getEvents(int president_id) {
+        String sql = "SELECT * FROM " + TABLE + " WHERE president_id = ?";
+        Object[] o = new Object[] { president_id };
+        List<Event> events = jdbcTemplate.query(sql, o, MAPPER);
         return events;
     }
 
     @Override
-    public List<Event> getEventsForPeriod(
-            President president, java.sql.Date start, java.sql.Date end) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE president_id = ?" +
-                " AND NOT (start > ? OR end < ?)";
-        Object[] o = new Object[] { president.getId(), end, start };
-        List<Event> events = jdbcTemplate.query(sql, o, newMapper());
+    public Collection<Event> getEventsForPeriod(
+            int president_id, java.sql.Date start, java.sql.Date end) {
+        String sql =
+                "SELECT * FROM " + TABLE + " WHERE president_id = ? " +
+                "AND NOT (start > ? OR end < ?)";
+        Object[] o = new Object[] { president_id, end, start };
+        List<Event> events = jdbcTemplate.query(sql, o, MAPPER);
         return events;
 
     }
 
-    private static RowMapper<Event> newMapper()
-    {
-        return BeanPropertyRowMapper.newInstance(Event.class);
-    }
+    private static final RowMapper<Event> MAPPER = new BeanPropertyRowMapper<>(Event.class, true);
 }

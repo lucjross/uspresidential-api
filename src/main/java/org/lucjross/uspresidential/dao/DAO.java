@@ -5,12 +5,6 @@ package org.lucjross.uspresidential.dao;
  */
 public interface DAO<T> {
 
-    /**
-     * Inserts a row.
-     *
-     * @param t  An instance of {@link T}.
-     * @return  The ID of the inserted row.
-     */
     public void create(T t);
 
     public T find(Integer id);

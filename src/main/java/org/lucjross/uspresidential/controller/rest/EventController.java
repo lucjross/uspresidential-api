@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -44,15 +45,13 @@ public class EventController {
     @ApiOperation(value="Get events for period",
             notes="Gets all of a president's events that occurred at least partially during the given" +
             " date range. Events missing a start date or end date will be excluded.")
-    public List<Event> getEventsByPresidentForPeriod(
+    public Collection<Event> getEventsByPresidentForPeriod(
             @RequestParam("president-id") Integer presidentID,
             @RequestParam(value="start-date", defaultValue=MIN_DATE) String startDate,
             @RequestParam(value="end-date", defaultValue=MAX_DATE) String endDate) {
-        President president = new President();
-        president.setId(presidentID);
         java.sql.Date start = java.sql.Date.valueOf(startDate);
         java.sql.Date end = java.sql.Date.valueOf(endDate);
-        List<Event> events = eventDAO.getEventsForPeriod(president, start, end);
+        Collection<Event> events = eventDAO.getEventsForPeriod(presidentID, start, end);
         return events;
     }
 
@@ -64,11 +63,11 @@ public class EventController {
      * @return  A map of event IDs to {@link Event}s.
      */
     @RequestMapping(value="/by-president", method=RequestMethod.GET)
-    public List<Event> getEventsByPresident(
+    public Collection<Event> getEventsByPresident(
             @RequestParam("president-id") Integer presidentID) {
         President president = new President();
         president.setId(presidentID);
-        List<Event> events = eventDAO.getEvents(president);
+        Collection<Event> events = eventDAO.getEvents(presidentID);
         return events;
     }
 

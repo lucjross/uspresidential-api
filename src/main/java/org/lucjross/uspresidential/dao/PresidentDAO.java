@@ -10,5 +10,8 @@ import java.util.List;
  */
 public interface PresidentDAO extends DAO<President> {
 
+    /**
+     * @return All presidents in order
+     */
     public List<President> getPresidents();
 }

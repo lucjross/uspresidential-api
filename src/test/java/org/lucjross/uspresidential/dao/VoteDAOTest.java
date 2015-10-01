@@ -1,14 +1,12 @@
 package org.lucjross.uspresidential.dao;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.lucjross.uspresidential.TestCase;
 import org.lucjross.uspresidential.model.Vote;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by lucas on 12/28/2014.
@@ -31,12 +29,11 @@ public class VoteDAOTest extends TestCase {
 
         Collection<Vote> votes = voteDAO.getVotes(1, "user0");
         Assert.assertEquals(1, votes.size());
-        for (Vote v : votes) {
-            Assert.assertEquals("user0", v.getUser_username());
-            Assert.assertEquals(1, v.getEvent_id());
-            Assert.assertEquals("Yes", v.getVote());
-            Assert.assertEquals(5, v.getWeight());
-            Assert.assertNotNull(v.getTimestamp());
-        }
+        Vote v = votes.iterator().next();
+        Assert.assertEquals("user0", v.getUser_username());
+        Assert.assertEquals(1, v.getEvent_id());
+        Assert.assertEquals("Yes", v.getVote());
+        Assert.assertEquals(5, v.getWeight());
+        Assert.assertNotNull(v.getTimestamp());
     }
 }
