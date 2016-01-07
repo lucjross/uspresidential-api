@@ -1,8 +1,5 @@
 package org.lucjross.uspresidential;
 
-import org.apache.commons.dbcp2.*;
-import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +13,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
@@ -48,46 +43,13 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(Application.class);
     }
 
-    @Resource
-    private Environment env;
-
     @Bean
-    public DataSource getDataSource() throws ClassNotFoundException {
-
-        final String dataSourcePropertySuffix = dataSourcePropertySuffix();
-        logger.info("dataSourcePropertySuffix=" + dataSourcePropertySuffix);
-
-        Class.forName(env.getRequiredProperty("datasource.driverClassName" + dataSourcePropertySuffix));
-
-        String uri =
-                env.getRequiredProperty("datasource.url" + dataSourcePropertySuffix) +
-                "/" +
-                env.getRequiredProperty("schema.name" + dataSourcePropertySuffix);
-        String user = env.getRequiredProperty("datasource.username" + dataSourcePropertySuffix);
-        String pass = env.getRequiredProperty("datasource.password" + dataSourcePropertySuffix);
-        ConnectionFactory connectionFactory =
-                new DriverManagerConnectionFactory(uri, user, pass);
-        PoolableConnectionFactory poolableConnectionFactory =
-                new PoolableConnectionFactory(connectionFactory, null);
-        ObjectPool<PoolableConnection> connectionPool =
-                new GenericObjectPool<>(poolableConnectionFactory);
-        poolableConnectionFactory.setPool(connectionPool);
-        PoolingDataSource<PoolableConnection> dataSource =
-                new PoolingDataSource<>(connectionPool);
-        return dataSource;
-    }
-
-    protected String dataSourcePropertySuffix() {
-        return "";
-    }
-
-    @Bean
-    public ApplicationSecurity applicationSecurity() {
-        return new ApplicationSecurity();
+    public WebSecurityConfigurerAdapter applicationSecurity() {
+        return new CustomSecurity();
     }
 
     @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
-    protected static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
+    protected static class CustomSecurity extends WebSecurityConfigurerAdapter {
 
         @Autowired
         private DataSource dataSource;

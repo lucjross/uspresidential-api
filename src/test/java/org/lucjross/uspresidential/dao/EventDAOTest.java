@@ -26,7 +26,7 @@ public class EventDAOTest extends TestCase {
         Assert.assertEquals(1, e.getPresident_id());
         Assert.assertEquals(5, e.getWeight());
         Assert.assertEquals("minor", e.getImportance());
-        Assert.assertEquals("appointment", e.getCategory());
+        Assert.assertEquals("foreign", e.getCategory());
         Assert.assertEquals("summary0", e.getSummary());
         Assert.assertEquals(Date.valueOf("1950-1-1"), e.getStart());
         Assert.assertEquals(Date.valueOf("1950-2-2"), e.getEnd());
@@ -43,7 +43,7 @@ public class EventDAOTest extends TestCase {
         Assert.assertEquals(1, e.getPresident_id());
         Assert.assertEquals(5, e.getWeight());
         Assert.assertEquals("minor", e.getImportance());
-        Assert.assertEquals("appointment", e.getCategory());
+        Assert.assertEquals("foreign", e.getCategory());
         Assert.assertEquals("summary0", e.getSummary());
         Assert.assertEquals(Date.valueOf("1950-1-1"), e.getStart());
         Assert.assertEquals(Date.valueOf("1950-2-2"), e.getEnd());

@@ -4,8 +4,8 @@
 --
 
 
-drop procedure if exists insert_presidents
-;
+--drop procedure if exists insert_presidents
+--;
 
 create procedure insert_presidents()
 begin
@@ -14,8 +14,9 @@ begin
 
     start transaction;
     while v_i <= v_max do
-        insert into `presidents` (`lastname`, `firstname`, `order`, `wiki_link`)
+        insert into `presidents` (`id`, `lastname`, `firstname`, `order`, `wiki_link`)
         values (
+            v_i,
             concat('prez', v_i),
             concat('mr', v_i),
             v_i,
@@ -32,8 +33,8 @@ call insert_presidents()
 --
 -- random events data
 --
-drop procedure if exists insert_events
-;
+--drop procedure if exists insert_events
+--;
 
 create procedure insert_events()
 begin
@@ -43,6 +44,7 @@ begin
     start transaction;
     while v_i < v_max do
         insert into `events` (
+            `id`,
             `description`,
             `president_id`,
             `weight`,
@@ -53,11 +55,12 @@ begin
             `end`,
             `wiki_link`)
         values (
+            v_i,
             concat('desc', v_i),
             mod(v_i, 10) + 1,
             mod(v_i + 5, 10),
-            elt(1 + floor(rand() * 2), 'minor','major'),
-            elt(1 + floor(rand() * 5), 'foreign','domestic','appointment','misc','unassigned'),
+            elt(1 + mod(v_i, 2), 'minor','major'),
+            elt(1 + mod(v_i, 5), 'foreign','domestic','appointment','misc','unassigned'),
             concat('summary', v_i),
             concat(1950 + v_i, '-01-01'),
             concat(1950 + v_i, '-02-02'),
@@ -95,6 +98,14 @@ end
 ;
 
 call insert_users()
+;
+
+insert into `users` (`username`, `password`, `enabled`) values (
+    'lucas', '$2a$10$5MNaiZOpy/LGV8Z4qciDM.oL7V3pN2MngKGT7kwwYcza/SPMH7nQS', 1) -- 'fuck'
+;
+
+insert into `authorities` (`username`, `authority`) values (
+    'lucas', 'ROLE_ADMIN')
 ;
 
 create procedure insert_votes()

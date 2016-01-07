@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 @ApiIgnore
-@RequestMapping("/")
+//@RequestMapping("/")
 public class PageController {
 
-    public String index() {
-        return "index.html";
-    }
+//    public String index() {
+//        return "index.html";
+//    }
 }

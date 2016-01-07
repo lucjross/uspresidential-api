@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public interface EventDAO extends DAO<Event> {
 
-    public Collection<Event> getEvents(int president_id);
+    Collection<Event> getEvents(int president_id);
 
-    public Collection<Event> getEventsForPeriod(int president_id, java.sql.Date start, java.sql.Date end);
+    Collection<Event> getEventsForPeriod(int president_id, java.sql.Date start, java.sql.Date end);
 }

@@ -5,8 +5,5 @@ package org.lucjross.uspresidential;
  */
 public class TestApplication extends Application {
 
-//    @Override
-//    protected String dataSourcePropertySuffix() {
-//        return ".test";
-//    }
+
 }

@@ -1,14 +1,10 @@
 package org.lucjross.uspresidential;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
-
 /**
  * Created by lucas on 5/31/2015.
  */
-@Configuration
-//@Import(RepositoryRestMvcConfiguration.class)
-public class RestApiConfig extends RepositoryRestMvcConfiguration {
+//@Configuration
+public class RestApiConfig { //extends RepositoryRestMvcConfiguration {
 
     public static final String BASE_URI = "/presidents-api";
 
