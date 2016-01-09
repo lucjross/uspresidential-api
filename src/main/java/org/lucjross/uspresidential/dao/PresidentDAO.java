@@ -13,5 +13,5 @@ public interface PresidentDAO extends DAO<President> {
     /**
      * @return All presidents in order
      */
-    public List<President> getPresidents();
+    List<President> getPresidents();
 }

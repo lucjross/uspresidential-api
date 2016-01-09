@@ -5,11 +5,11 @@ package org.lucjross.uspresidential.dao;
  */
 public interface DAO<T> {
 
-    public void create(T t);
+    void create(T t);
 
-    public T find(Integer id);
+    T find(Integer id);
 
-    public T update(T t);
+    T update(T t);
 
-    public void delete(Integer id);
+    void delete(Integer id);
 }
