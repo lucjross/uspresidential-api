@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Created by lucas on 4/16/2015.
  */
-//@Component
+//@Component // disabled
 public class SimpleCORSFilter implements Filter {
 
     @Override

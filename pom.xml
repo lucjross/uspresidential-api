@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.2.1.RELEASE</version>
+        <version>1.3.1.RELEASE</version>
     </parent>
 
     <properties>
@@ -26,7 +26,79 @@
     </properties>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Serves *only* to filter the wro.xml so it can get an absolute
+                          path for the project -->
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/wro</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/wro</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>ro.isdc.wro4j</groupId>
+                <artifactId>wro4j-maven-plugin</artifactId>
+                <version>1.7.6</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+                    <cssDestinationFolder>${project.build.directory}/generated-resources/static/css</cssDestinationFolder>
+                    <jsDestinationFolder>${project.build.directory}/generated-resources/static/js</jsDestinationFolder>
+                    <wroFile>${project.build.directory}/wro/wro.xml</wroFile>
+                    <extraConfigFile>${basedir}/src/main/wro/wro.properties</extraConfigFile>
+                    <contextFolder>${basedir}/src/main/wro</contextFolder>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.webjars</groupId>
+                        <artifactId>jquery</artifactId>
+                        <version>2.1.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.webjars</groupId>
+                        <artifactId>angularjs</artifactId>
+                        <version>1.3.8</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.webjars</groupId>
+                        <artifactId>bootstrap</artifactId>
+                        <version>3.2.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -38,43 +110,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>properties-maven-plugin</artifactId>-->
-                <!--<version>1.0-alpha-2</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>loadProperties</id>-->
-                        <!--&lt;!&ndash; Load properties from file &ndash;&gt;-->
-
-                        <!--<phase>process-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>read-project-properties</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<files>-->
-                                <!--<file>src/main/resources/application.properties</file>-->
-                            <!--</files>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-
-                    <!--<execution>-->
-                        <!--<id>loadTestProperties</id>-->
-                        <!--&lt;!&ndash; Load test properties from file &ndash;&gt;-->
-
-                        <!--<phase>process-test-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>read-project-properties</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<files>-->
-                                <!--<file>src/test/resources/application.properties</file>-->
-                            <!--</files>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
 
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
@@ -121,70 +156,20 @@
                 </executions>
             </plugin>
 
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>sql-maven-plugin</artifactId>-->
-                <!--<version>1.5</version>-->
-
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>mysql</groupId>-->
-                        <!--<artifactId>mysql-connector-java</artifactId>-->
-                        <!--<version>5.1.9</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-
-                <!--<configuration>-->
-                    <!--<driver>${datasource.driverClassName}</driver>-->
-                    <!--<url>${datasource.url}</url>-->
-                    <!--<username>${datasource.username}</username>-->
-                    <!--<password>${datasource.password}</password>-->
-
-                    <!--<delimiterType>row</delimiterType>-->
-                <!--</configuration>-->
-
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>create-schema</id>-->
-                        <!--<phase>process-test-resources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>execute</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<autocommit>true</autocommit>-->
-                            <!--<enableFiltering>true</enableFiltering>-->
-                            <!--<srcFiles>-->
-                                <!--<srcFile>${resourcesDir.test}/createSchema.sql</srcFile>-->
-                                <!--<srcFile>${resourcesDir.test}/insertData.sql</srcFile>-->
-                            <!--</srcFiles>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
         </plugins>
-
-        <!--<resources>-->
-            <!--<resource>-->
-                <!--<directory>${resourcesDir}</directory>-->
-            <!--</resource>-->
-            <!--<resource>-->
-                <!--<directory>${resourcesDir.test}</directory>-->
-            <!--</resource>-->
-        <!--</resources>-->
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>4.1.4.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <!--<dependencyManagement>-->
+        <!--<dependencies>-->
+            <!--<dependency>-->
+                <!--<groupId>org.springframework</groupId>-->
+                <!--<artifactId>spring-framework-bom</artifactId>-->
+                <!--<version>4.1.4.RELEASE</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
+        <!--</dependencies>-->
+    <!--</dependencyManagement>-->
 
     <dependencies>
         <dependency>
