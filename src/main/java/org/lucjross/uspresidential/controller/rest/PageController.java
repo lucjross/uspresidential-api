@@ -1,7 +1,10 @@
 package org.lucjross.uspresidential.controller.rest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,9 +19,13 @@ import java.util.UUID;
 @RestController
 public class PageController {
 
-    @RequestMapping("/page")
+    @Autowired
+    protected UserDetailsService prezUserDetailsService;
+
+    @RequestMapping("/homePage")
     public Map<String, Object> home() {
         Map<String, Object> model = new HashMap<>();
+        
         model.put("id", UUID.randomUUID().toString());
         model.put("content", "Hello World");
         return model;

@@ -1,8 +1,7 @@
-<h1>Greeting</h1>
+<div><h1>Presidential Ranker</h1></div>
 <div ng-show="authenticated">
-	<p>The ID is {{greeting.id}}</p>
-	<p>The content is {{greeting.content}}</p>
+	<p>Welcome, {{id}}!</p>
 </div>
-<div  ng-show="!authenticated">
-	<p>Login to see your greeting</p>
+<div ng-show="!authenticated">
+	<p>Please log in...</p>
 </div>

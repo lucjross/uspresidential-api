@@ -14,7 +14,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -51,6 +53,7 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(Application.class);
     }
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Configuration
     @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
     protected static class CustomSecurity extends WebSecurityConfigurerAdapter {
@@ -64,12 +67,18 @@ public class Application extends SpringBootServletInitializer {
                     .httpBasic().realmName("uspresidential")
                 .and()
                     .authorizeRequests()
-                        .antMatchers("/index.html", "/home.html", "/login.html", "/").permitAll()
+                        .antMatchers(
+                                "/index.html",
+                                "/home.html",
+                                "/login.html",
+                                "/register.html",
+                                "/").permitAll()
                         .anyRequest().authenticated()
                 .and()
                     .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
                     .csrf().csrfTokenRepository(csrfTokenRepository())
                 .and()
+                    .addFilter(new BasicAuthenticationFilter(authenticationManager()))
                     .logout();
 //                    .antMatchers("/presidents-api/**").authenticated()
 //                    .and().httpBasic().realmName("presidents-api");
@@ -81,12 +90,14 @@ public class Application extends SpringBootServletInitializer {
             return repository;
         }
 
+        @Autowired
+        private UserDetailsService prezUserDetailsService;
+
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth
-                    .jdbcAuthentication()
-                    .passwordEncoder(new BCryptPasswordEncoder())
-                    .dataSource(dataSource);
+                    .userDetailsService(prezUserDetailsService)
+                    .passwordEncoder(new BCryptPasswordEncoder());
         }
     }
 

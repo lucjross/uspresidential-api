@@ -6,7 +6,7 @@ helloModule.config(function ($routeProvider, $httpProvider) {
 				templateUrl: "home.html",
 				controller: 'home'
 			})
-			.when('/login', {
+			.when('/loginPage', {
 				templateUrl: "login.html",
 				controller: 'navigation'
 			})
@@ -17,9 +17,11 @@ helloModule.config(function ($routeProvider, $httpProvider) {
 
 helloModule
 		.controller('home', function ($scope, $http) {
-		    $http.get('/page/').success(function (data) {
-		    	$scope.greeting = data;
-		    })
+		    $http.get('/homePage/').then(function (response) {
+		    	$scope.greeting = response.data;
+		    }, function (what) {
+		    	what = what;
+		    });
 		})
 		.controller('navigation', function ($rootScope, $scope, $http, $location) {
 
@@ -29,16 +31,15 @@ helloModule
 						{ authorization: "Basic " + btoa(credentials.username + ":" + credentials.password)} :
 						{};
 
-				$http.get('user', {headers: headers})
-						.success(function () {
-							$rootScope.authenticated = true;
-						})
-						.error(function () {
-							$rootScope.authenticated = false;
-						})
-						.always(function () {
-							callback && callback();
-						});
+				$http.get('user', {headers: headers}).then(function () { 
+					// success cb
+					$rootScope.authenticated = true;
+					callback && callback();
+				}, function () {
+					// error cb
+					$rootScope.authenticated = false;
+					callback && callback();
+				});
 			};
 
 			authenticate();
@@ -51,18 +52,17 @@ helloModule
 						$scope.error = false;
 					}
 					else {
-						$location.path("/login");
+						$location.path("/loginPage");
 						$scope.error = true;
 					}
 				});
 			};
 			$scope.logout = function () {
-				$http.post('logout', {})
-						.success(function () {
-					    	$location.path("/");
-						})
-						.always(function () {
-							$rootScope.authenticated = false;
-						})
+				$http.post('logout', {}).then(function () {
+					$rootScope.authenticated = false;
+			    	$location.path("/");
+				}, function () {
+					$rootScope.authenticated = false;
+				});
 			}
 		});

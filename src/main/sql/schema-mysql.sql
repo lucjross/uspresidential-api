@@ -31,6 +31,7 @@ CREATE TABLE `%SCHEMA%`.`users` (
   `username` VARCHAR(50) NOT NULL,
   `password` VARCHAR(60) NOT NULL,
   `enabled` TINYINT(1) NOT NULL,
+	`someField` CHAR null,
   PRIMARY KEY (`username`))
 ;
 
