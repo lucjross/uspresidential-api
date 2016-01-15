@@ -1,10 +1,12 @@
 package org.lucjross.uspresidential.controller.rest;
 
+import org.lucjross.uspresidential.model.PrezUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,12 +25,16 @@ public class PageController {
     protected UserDetailsService prezUserDetailsService;
 
     @RequestMapping("/homePage")
-    public Map<String, Object> home() {
-        Map<String, Object> model = new HashMap<>();
-        
-        model.put("id", UUID.randomUUID().toString());
-        model.put("content", "Hello World");
-        return model;
+    public Map<String, ?> home(Authentication auth) {
+
+        PrezUser user = (PrezUser) auth.getPrincipal();
+
+        Assert.isNull(user.getPassword());
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("user", user);
+
+        return map;
     }
 
     @RequestMapping("/user")

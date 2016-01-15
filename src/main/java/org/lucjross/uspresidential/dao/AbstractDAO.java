@@ -15,7 +15,27 @@ public abstract class AbstractDAO<T> implements DAO<T> {
     protected JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(@SuppressWarnings("SpringJavaAutowiringInspection") DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public void create(T t) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T find(Integer id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T update(T t) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void delete(Integer id) {
+        throw new UnsupportedOperationException();
     }
 }

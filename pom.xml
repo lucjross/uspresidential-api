@@ -245,6 +245,12 @@
             <!--<version>8.0.15</version>-->
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.neovisionaries</groupId>
+            <artifactId>nv-i18n</artifactId> <!-- Countries enum -->
+            <version>1.18</version>
+        </dependency>
     </dependencies>
 
     <repositories>

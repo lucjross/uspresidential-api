@@ -25,21 +25,6 @@ public class PresidentDAOImpl extends AbstractDAO<President> implements Presiden
     }
 
     @Override
-    public void create(President president) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public President update(President president) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void delete(Integer id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<President> getPresidents() {
         String sql = "SELECT * FROM " + TABLE + " order by `order` asc";
         List<President> presidents = jdbcTemplate.query(sql, MAPPER);

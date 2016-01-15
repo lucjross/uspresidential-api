@@ -1,0 +1,10 @@
+<div><h1>Register</h1></div>
+<div ng-controller="registration">
+	<form novalidate class="simple-form">
+		Username: <input type="text" ng-model="user.username"/><br/>
+		Password: <input type="password" ng-model="user.password"/><br/>
+		E-mail: <input type="email" ng-model="user.email"/><br/>
+		<br/>
+		<select ng-model="user.namePrefix" ng-options="prefix as prefix.label for prefix in namePrefixes track by prefix.name"></select><br/>
+	</form>
+</div>

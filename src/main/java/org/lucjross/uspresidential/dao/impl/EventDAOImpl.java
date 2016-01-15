@@ -21,25 +21,10 @@ public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
     private static final String TABLE = "events";
 
     @Override
-    public void create(Event event) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Event find(Integer id) {
         String sql = "SELECT * FROM " + TABLE + " WHERE id = ?";
         Event event = jdbcTemplate.queryForObject(sql, new Object[] {id}, MAPPER);
         return event;
-    }
-
-    @Override
-    public Event update(Event event) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void delete(Integer id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

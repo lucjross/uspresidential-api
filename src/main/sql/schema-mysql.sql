@@ -1,4 +1,3 @@
--- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0
 ;
@@ -13,8 +12,8 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES'
 -- -----------------------------------------------------
 -- Schema presidents
 -- -----------------------------------------------------
---DROP SCHEMA IF EXISTS `%SCHEMA%`
---;
+-- DROP SCHEMA IF EXISTS `%SCHEMA%`
+-- ;
 
 -- -----------------------------------------------------
 -- Schema presidents
@@ -31,7 +30,24 @@ CREATE TABLE `%SCHEMA%`.`users` (
   `username` VARCHAR(50) NOT NULL,
   `password` VARCHAR(60) NOT NULL,
   `enabled` TINYINT(1) NOT NULL,
-	`someField` CHAR null,
+  `creationTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  `email` varchar(255) not null,
+	`namePrefix` varchar(16) null,
+	`firstName` varchar(32) null,
+	`lastName` varchar(32) null,
+  `birthDate` DATE NULL,
+  `gender` varchar(32) NULL,
+  `politicsSocial` varchar(64) NULL,
+  `politicsFiscal` varchar(64) NULL,
+  `education` varchar(64) NULL,
+  `occupation` varchar(64) NULL,
+  `stateOrTerritory` varchar(32) NULL,
+  `countryAlpha2Code` varchar(2) NULL,
+  `religion` varchar(64) NULL,
+  `annualIncome` varchar(32) NULL,
+  `maritalStatus` varchar(32) NULL,
+  `sexuality` varchar(32) NULL,
   PRIMARY KEY (`username`))
 ;
 

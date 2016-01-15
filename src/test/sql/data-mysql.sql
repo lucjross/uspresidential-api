@@ -4,8 +4,8 @@
 --
 
 
---drop procedure if exists insert_presidents
---;
+-- drop procedure if exists insert_presidents
+-- ;
 
 create procedure insert_presidents()
 begin
@@ -33,8 +33,8 @@ call insert_presidents()
 --
 -- random events data
 --
---drop procedure if exists insert_events
---;
+-- drop procedure if exists insert_events
+-- ;
 
 create procedure insert_events()
 begin
@@ -100,8 +100,10 @@ end
 call insert_users()
 ;
 
-insert into `users` (`username`, `password`, `enabled`) values (
-    'lucas', '$2a$10$5MNaiZOpy/LGV8Z4qciDM.oL7V3pN2MngKGT7kwwYcza/SPMH7nQS', 1) -- 'fuck'
+insert into `users` (`username`, `password`, `enabled`,
+    `email`, `namePrefix`, `firstName`, `lastName`) values (
+    'lucas', '$2a$10$5MNaiZOpy/LGV8Z4qciDM.oL7V3pN2MngKGT7kwwYcza/SPMH7nQS', 1, -- 'fuck'
+    'lucas@what.com', 'MR', 'Luc', 'Ross')
 ;
 
 insert into `authorities` (`username`, `authority`) values (

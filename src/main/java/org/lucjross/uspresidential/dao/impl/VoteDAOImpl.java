@@ -35,21 +35,6 @@ public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
     }
 
     @Override
-    public Vote find(Integer id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Vote update(Vote vote) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void delete(Integer id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Collection<Vote> getVotes(Event event) {
         String sql = "SELECT * FROM " + TABLE + " WHERE event_id=?";
         Object[] o = new Object[] {event.getId()};

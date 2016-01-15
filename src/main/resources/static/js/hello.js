@@ -10,6 +10,10 @@ helloModule.config(function ($routeProvider, $httpProvider) {
 				templateUrl: "login.html",
 				controller: 'navigation'
 			})
+			.when('/registerPage', {
+				templateUrl: "register.html",
+				controller: 'register'
+			})
 			.otherwise('/');
 
 	$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
@@ -18,10 +22,8 @@ helloModule.config(function ($routeProvider, $httpProvider) {
 helloModule
 		.controller('home', function ($scope, $http) {
 		    $http.get('/homePage/').then(function (response) {
-		    	$scope.greeting = response.data;
-		    }, function (what) {
-		    	what = what;
-		    });
+		    	$scope.user = response.data.user;
+		    }, null);
 		})
 		.controller('navigation', function ($rootScope, $scope, $http, $location) {
 
@@ -64,5 +66,18 @@ helloModule
 				}, function () {
 					$rootScope.authenticated = false;
 				});
+			};
+			$scope.register = function () {
+				// in case they were already logged in and went to /registerPage
+				$http.post('logout', {}).finally(function () {
+					$rootScope.authenticated = false;
+				});
+			};
+		})
+		.controller('registration', function ($rootScope, $scope, $http, $location) {
+
+			var _register = function () {
+				$http.post('register', {})
 			}
 		});
+

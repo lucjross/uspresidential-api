@@ -110,5 +110,6 @@
     <orderEntry type="library" name="Maven: com.mangofactory:swagger-models:1.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-jasper:8.0.30" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jdt.core.compiler:ecj:4.4.2" level="project" />
+    <orderEntry type="library" name="Maven: com.neovisionaries:nv-i18n:1.18" level="project" />
   </component>
 </module>
