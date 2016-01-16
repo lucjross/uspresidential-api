@@ -1,10 +1,64 @@
 <div><h1>Register</h1></div>
-<div ng-controller="registration">
+<div ng-controller="registrationCtrlr">
 	<form novalidate class="simple-form">
 		Username: <input type="text" ng-model="user.username"/><br/>
 		Password: <input type="password" ng-model="user.password"/><br/>
 		E-mail: <input type="email" ng-model="user.email"/><br/>
 		<br/>
-		<select ng-model="user.namePrefix" ng-options="prefix as prefix.label for prefix in namePrefixes track by prefix.name"></select><br/>
+
+		<div class="alert alert-info">
+			The following fields are optional and help us with research...</a>
+		</div>
+
+		Birthdate: <input type="date" name="birthDate" id="birthDate" ng-model="user.birthDate" placeholder="MM-DD-YYYY" min="1900-01-01"/><br/>
+		Gender: <select name="genderSelect" id="genderSelect" ng-model="user.gender">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.gender" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Political Leaning - Social: <select name="politicsSocialSelect" id="politicsSocialSelect" ng-model="user.politicsSocial">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.politicsSocial" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Political Leaning - Fiscal: <select name="politicsFiscalSelect" id="politicsFiscalSelect" ng-model="user.politicsFiscal">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.politicsFiscal" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Education: <select name="educationSelect" id="educationSelect" ng-model="user.education">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.education" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Occupation: <select name="occupationSelect" id="occupationSelect" ng-model="user.occupation">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.occupation" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Country: <select name="countrySelect" id="countrySelect" ng-model="user.country">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.country" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		<div ng-show="user.country == 'US'">
+			State/Territory: <select name="stateSelect" id="stateSelect" ng-model="user.stateOrTerritory">
+				<option value=""></option>
+				<option ng-repeat="entry in userDetailLabels.stateOrTerritory" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+			</select><br/>
+		</div>
+		Religion: <select name="religionSelect" id="religionSelect" ng-model="user.religion">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.religion" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Annual Income: <select name="annualIncomeSelect" id="annualIncomeSelect" ng-model="user.annualIncome">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.annualIncome" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Marital Status: <select name="maritalStatusSelect" id="maritalStatusSelect" ng-model="user.maritalStatus">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.maritalStatus" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+		Sexuality: <select name="sexualitySelect" id="sexualitySelect" ng-model="user.sexuality">
+			<option value=""></option>
+			<option ng-repeat="entry in userDetailLabels.sexuality" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+		</select><br/>
+
+		<input type="button" ng-click="reset()" value="Reset" />
+    	<input type="submit" ng-click="register(user)" value="Save" />
 	</form>
 </div>

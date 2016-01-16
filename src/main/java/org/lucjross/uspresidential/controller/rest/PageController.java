@@ -1,6 +1,7 @@
 package org.lucjross.uspresidential.controller.rest;
 
 import org.lucjross.uspresidential.model.PrezUser;
+import org.lucjross.uspresidential.model.PrezUserDetailLabels;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,10 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,7 +25,7 @@ import java.util.UUID;
 public class PageController {
 
     @Autowired
-    protected UserDetailsService prezUserDetailsService;
+    private PrezUserDetailLabels prezUserDetailLabels;
 
     @RequestMapping("/homePage")
     public Map<String, ?> home(Authentication auth) {
@@ -37,8 +40,8 @@ public class PageController {
         return map;
     }
 
-    @RequestMapping("/user")
-    public ResponseEntity<String> user(Principal user) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    @RequestMapping("/public-api/userDetailLabels")
+    public Map<String, ?> userDetailLabels() {
+        return prezUserDetailLabels.labels();
     }
 }

@@ -247,10 +247,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.neovisionaries</groupId>
-            <artifactId>nv-i18n</artifactId> <!-- Countries enum -->
-            <version>1.18</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
+
     </dependencies>
 
     <repositories>

@@ -57,6 +57,7 @@ public class Application extends SpringBootServletInitializer {
     @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
     protected static class CustomSecurity extends WebSecurityConfigurerAdapter {
 
+        @SuppressWarnings("SpringJavaAutowiringInspection")
         @Autowired
         private DataSource dataSource;
 
@@ -72,6 +73,7 @@ public class Application extends SpringBootServletInitializer {
                                 "/login.html",
                                 "/register.html",
                                 "/").permitAll()
+                        .antMatchers("/public-api/**").permitAll()
                         .anyRequest().authenticated()
                 .and()
                     .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)

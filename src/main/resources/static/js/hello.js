@@ -4,15 +4,15 @@ helloModule.config(function ($routeProvider, $httpProvider) {
 	$routeProvider
 			.when('/', {
 				templateUrl: "home.html",
-				controller: 'home'
+				controller: 'homeCtrlr'
 			})
 			.when('/loginPage', {
 				templateUrl: "login.html",
-				controller: 'navigation'
+				controller: 'loginCtrlr'
 			})
 			.when('/registerPage', {
 				templateUrl: "register.html",
-				controller: 'register'
+				controller: 'registrationCtrlr'
 			})
 			.otherwise('/');
 
@@ -20,14 +20,8 @@ helloModule.config(function ($routeProvider, $httpProvider) {
 });
 
 helloModule
-		.controller('home', function ($scope, $http) {
-		    $http.get('/homePage/').then(function (response) {
-		    	$scope.user = response.data.user;
-		    }, null);
-		})
-		.controller('navigation', function ($rootScope, $scope, $http, $location) {
-
-			var authenticate = function (credentials, callback) {
+		.factory('authenticate', ['$rootScope', '$http', function ($rootScope, $http) {
+			return function (credentials, callback) {
 
 				var headers = credentials ?
 						{ authorization: "Basic " + btoa(credentials.username + ":" + credentials.password)} :
@@ -43,8 +37,43 @@ helloModule
 					callback && callback();
 				});
 			};
+		}])
+		.factory('oneKey', function () {
+			return function (obj) { return Object.keys(obj)[0]; }
+		})
+		.factory('oneVal', function () {
+			return function (obj) { return obj[Object.keys(obj)[0]]; }
+		});
+
+helloModule
+		.controller('homeCtrlr', function ($scope, $http) {
+		    $http.get('/homePage/').then(function (response) {
+		    	$scope.user = response.data.user;
+		    }, null);
+		})
+		.controller('navigationCtrlr',
+				['authenticate', '$rootScope', '$scope', '$http', '$location',
+				function (authenticate, $rootScope, $scope, $http, $location) {
 
 			authenticate();
+
+			$scope.logout = function () {
+				$http.post('logout', {}).then(function () {
+					$rootScope.authenticated = false;
+			    	$location.path("/");
+				}, function () {
+					$rootScope.authenticated = false;
+				});
+			};
+		
+		}])
+		.controller('loginCtrlr',
+				['authenticate', '$rootScope', '$scope', '$http', '$location',
+				function (authenticate, $rootScope, $scope, $http, $location) {
+
+			$http.post('logout', {}).finally(function () {
+				$rootScope.authenticated = false;
+			});
 
 			$scope.credentials = {};
 			$scope.login = function () {
@@ -59,25 +88,40 @@ helloModule
 					}
 				});
 			};
-			$scope.logout = function () {
-				$http.post('logout', {}).then(function () {
-					$rootScope.authenticated = false;
-			    	$location.path("/");
-				}, function () {
-					$rootScope.authenticated = false;
-				});
-			};
-			$scope.register = function () {
-				// in case they were already logged in and went to /registerPage
-				$http.post('logout', {}).finally(function () {
-					$rootScope.authenticated = false;
-				});
-			};
-		})
-		.controller('registration', function ($rootScope, $scope, $http, $location) {
+		}])
+		.controller('registrationCtrlr',
+				['oneKey', 'oneVal', '$rootScope', '$scope', '$http', '$location',
+				function (oneKey, oneVal, $rootScope, $scope, $http, $location) {
 
-			var _register = function () {
-				$http.post('register', {})
+			$http.post('logout', {}).finally(function () {
+				$rootScope.authenticated = false;
+			});
+
+			$scope.oneKey = oneKey;
+			$scope.oneVal = oneVal;
+
+			$scope.register = function (newUser) {
+				// $http.post('register', {}); // ...
+				newUser = newUser;
 			}
-		});
+
+			$scope.master = {};
+			$scope.reset = function() {
+	        	$scope.user = angular.copy($scope.master);
+	      	};
+
+	      	$scope.reset();
+
+	      	$scope.user = {};
+			$http.get('/public-api/userDetailLabels').then(function (response) {
+				$scope.userDetailLabels = response.data;
+				// angular.forEach($scope.userDetailLabels, function (value, key) {
+				// 	// add a blank "no answer" value to each select.
+				// 	value.noAnswer = "";
+
+				// 	// set the initial value of each option to noAnswer.
+				// 	$scope.user[key] = value.noAnswer;
+				// });
+			});
+		}]);
 
