@@ -31,11 +31,8 @@ CREATE TABLE `%SCHEMA%`.`users` (
   `password` VARCHAR(60) NOT NULL,
   `enabled` TINYINT(1) NOT NULL,
   `creationTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
   `email` varchar(255) not null,
-	`namePrefix` varchar(16) null,
-	`firstName` varchar(32) null,
-	`lastName` varchar(32) null,
+
   `birthDate` DATE NULL,
   `gender` varchar(32) NULL,
   `politicsSocial` varchar(64) NULL,

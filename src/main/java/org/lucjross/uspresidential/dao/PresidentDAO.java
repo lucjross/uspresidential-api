@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by lucas on 11/21/2014.
  */
-public interface PresidentDAO extends DAO<President> {
+public interface PresidentDAO extends DAO<President, Integer> {
 
     /**
      * @return All presidents in order

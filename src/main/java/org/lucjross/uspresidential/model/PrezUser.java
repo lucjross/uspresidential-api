@@ -5,116 +5,184 @@ import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
- * Created by lucas on 1/12/16.
+ * Created by lucas on 1/16/16.
  */
 public class PrezUser extends User {
 
-    protected LocalDateTime creationTimestamp;
-    protected Optional<LocalDate> birthDate;
-    protected Optional<String> gender;
-    protected Optional<String> politicsSocial;
-    protected Optional<String> politicsFiscal;
-    protected Optional<String> education;
-    protected Optional<String> occupation;
-    protected Optional<String> stateOrTerritory;
-    protected Optional<String> country;
-    protected Optional<String> religion;
-    protected Optional<String> annualIncome;
-    protected Optional<String> maritalStatus;
-    protected Optional<String> sexuality;
+    protected final LocalDateTime creationTimestamp;
+    protected final String email;
+    protected final Optionals prezUserOptionals;
 
     public PrezUser(
             String username, String password, boolean enabled, boolean accountNonExpired,
             boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities,
             LocalDateTime creationTimestamp,
-            Optional<LocalDate> birthDate,
-            Optional<String> gender,
-            Optional<String> politicsSocial,
-            Optional<String> politicsFiscal,
-            Optional<String> education,
-            Optional<String> occupation,
-            Optional<String> stateOrTerritory,
-            Optional<String> country,
-            Optional<String> religion,
-            Optional<String> annualIncome,
-            Optional<String> maritalStatus,
-            Optional<String> sexuality) {
+            String email,
+            Optionals prezUserOptionals) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-
         this.creationTimestamp = Objects.requireNonNull(creationTimestamp);
-        this.birthDate = Objects.requireNonNull(birthDate);
-        this.gender = Objects.requireNonNull(gender);
-        this.politicsSocial = Objects.requireNonNull(politicsSocial);
-        this.politicsFiscal = Objects.requireNonNull(politicsFiscal);
-        this.education = Objects.requireNonNull(education);
-        this.occupation = Objects.requireNonNull(occupation);
-        this.stateOrTerritory = Objects.requireNonNull(stateOrTerritory);
-        this.country = Objects.requireNonNull(country);
-        this.religion = Objects.requireNonNull(religion);
-        this.annualIncome = Objects.requireNonNull(annualIncome);
-        this.maritalStatus = Objects.requireNonNull(maritalStatus);
-        this.sexuality = Objects.requireNonNull(sexuality);
+        this.email = Objects.requireNonNull(email);
+        this.prezUserOptionals = Objects.requireNonNull(prezUserOptionals);
     }
-
-    // ---
-    // ~ Getters
-    // ---
 
     public LocalDateTime getCreationTimestamp() {
         return creationTimestamp;
     }
 
-    public Optional<LocalDate> getBirthDate() {
-        return birthDate;
+    public Optionals getPrezUserOptionals() {
+        return prezUserOptionals;
     }
 
-    public Optional<String> getGender() {
-        return gender;
+    public String getEmail() {
+        return email;
     }
 
-    public Optional<String> getPoliticsSocial() {
-        return politicsSocial;
+
+    public static class Form {
+
+        private String username;
+        private String password;
+        private String email;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
     }
 
-    public Optional<String> getPoliticsFiscal() {
-        return politicsFiscal;
-    }
 
-    public Optional<String> getEducation() {
-        return education;
-    }
+    public static class Optionals {
 
-    public Optional<String> getOccupation() {
-        return occupation;
-    }
+        protected LocalDate birthDate;
+        protected String gender;
+        protected String politicsSocial;
+        protected String politicsFiscal;
+        protected String education;
+        protected String occupation;
+        protected String stateOrTerritory;
+        protected String country;
+        protected String religion;
+        protected String annualIncome;
+        protected String maritalStatus;
+        protected String sexuality;
 
-    public Optional<String> getStateOrTerritory() {
-        return stateOrTerritory;
-    }
+        public LocalDate getBirthDate() {
+            return birthDate;
+        }
 
-    public Optional<String> getCountry() {
-        return country;
-    }
+        public void setBirthDate(LocalDate birthDate) {
+            this.birthDate = birthDate;
+        }
 
-    public Optional<String> getReligion() {
-        return religion;
-    }
+        public String getGender() {
+            return gender;
+        }
 
-    public Optional<String> getAnnualIncome() {
-        return annualIncome;
-    }
+        public void setGender(String gender) {
+            this.gender = gender;
+        }
 
-    public Optional<String> getMaritalStatus() {
-        return maritalStatus;
-    }
+        public String getPoliticsSocial() {
+            return politicsSocial;
+        }
 
-    public Optional<String> getSexuality() {
-        return sexuality;
+        public void setPoliticsSocial(String politicsSocial) {
+            this.politicsSocial = politicsSocial;
+        }
+
+        public String getPoliticsFiscal() {
+            return politicsFiscal;
+        }
+
+        public void setPoliticsFiscal(String politicsFiscal) {
+            this.politicsFiscal = politicsFiscal;
+        }
+
+        public String getEducation() {
+            return education;
+        }
+
+        public void setEducation(String education) {
+            this.education = education;
+        }
+
+        public String getOccupation() {
+            return occupation;
+        }
+
+        public void setOccupation(String occupation) {
+            this.occupation = occupation;
+        }
+
+        public String getStateOrTerritory() {
+            return stateOrTerritory;
+        }
+
+        public void setStateOrTerritory(String stateOrTerritory) {
+            this.stateOrTerritory = stateOrTerritory;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public void setCountry(String country) {
+            this.country = country;
+        }
+
+        public String getReligion() {
+            return religion;
+        }
+
+        public void setReligion(String religion) {
+            this.religion = religion;
+        }
+
+        public String getAnnualIncome() {
+            return annualIncome;
+        }
+
+        public void setAnnualIncome(String annualIncome) {
+            this.annualIncome = annualIncome;
+        }
+
+        public String getMaritalStatus() {
+            return maritalStatus;
+        }
+
+        public void setMaritalStatus(String maritalStatus) {
+            this.maritalStatus = maritalStatus;
+        }
+
+        public String getSexuality() {
+            return sexuality;
+        }
+
+        public void setSexuality(String sexuality) {
+            this.sexuality = sexuality;
+        }
     }
 }

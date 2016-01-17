@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by lucas on 11/24/2014.
  */
-public interface VoteDAO extends DAO<Vote> {
+public interface VoteDAO extends DAO<Vote, Integer> {
 
     Collection<Vote> getVotes(Event event);
 

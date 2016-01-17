@@ -10,12 +10,12 @@ import javax.sql.DataSource;
  * Created by lucas on 11/21/2014.
  */
 @Repository
-public abstract class AbstractDAO<T> implements DAO<T> {
+public abstract class AbstractDAO<T, K> implements DAO<T, K> {
 
     protected JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public void setDataSource(@SuppressWarnings("SpringJavaAutowiringInspection") DataSource dataSource) {
+    public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
@@ -25,7 +25,7 @@ public abstract class AbstractDAO<T> implements DAO<T> {
     }
 
     @Override
-    public T find(Integer id) {
+    public T find(K id) {
         throw new UnsupportedOperationException();
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractDAO<T> implements DAO<T> {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(K id) {
         throw new UnsupportedOperationException();
     }
 }

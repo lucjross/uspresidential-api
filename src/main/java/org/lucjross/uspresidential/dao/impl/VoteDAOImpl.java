@@ -20,7 +20,7 @@ import java.util.List;
  * Created by lucas on 11/24/2014.
  */
 @Repository
-public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
+public class VoteDAOImpl extends AbstractDAO<Vote, Integer> implements VoteDAO {
 
     static final String TABLE = "votes";
 

@@ -13,7 +13,7 @@ import java.util.List;
  * Created by lucas on 11/23/2014.
  */
 @Repository
-public class PresidentDAOImpl extends AbstractDAO<President> implements PresidentDAO {
+public class PresidentDAOImpl extends AbstractDAO<President, Integer> implements PresidentDAO {
 
     static final String TABLE = "presidents";
 

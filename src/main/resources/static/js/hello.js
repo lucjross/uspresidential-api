@@ -43,6 +43,31 @@ helloModule
 		})
 		.factory('oneVal', function () {
 			return function (obj) { return obj[Object.keys(obj)[0]]; }
+		})
+		.factory('transformRequestAsFormPost', function () {
+			return function (data, getHeaders) {
+				var headers = getHeaders();
+				headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8";
+				return serialize(data);
+			};
+
+			function serialize(data) {
+				if (! angular.isObject(data)) {
+					return data == null ? "" : data.toString();
+				}
+
+				var buffer = [];
+				for (var name in data) {
+					if (! data.hasOwnProperty(name)) {
+						continue;
+					}
+
+					var value = data[name];
+					buffer.push(encodeURIComponent(name) + "=" + encodeURIComponent(value == null ? "" : value));
+				}
+
+				return buffer.join("&").replace(/%20/g, "+");
+			}
 		});
 
 helloModule
@@ -90,8 +115,8 @@ helloModule
 			};
 		}])
 		.controller('registrationCtrlr',
-				['oneKey', 'oneVal', '$rootScope', '$scope', '$http', '$location',
-				function (oneKey, oneVal, $rootScope, $scope, $http, $location) {
+				['oneKey', 'oneVal', 'transformRequestAsFormPost', '$rootScope', '$scope', '$http', '$location',
+				function (oneKey, oneVal, transformRequestAsFormPost, $rootScope, $scope, $http, $location) {
 
 			$http.post('logout', {}).finally(function () {
 				$rootScope.authenticated = false;
@@ -100,9 +125,18 @@ helloModule
 			$scope.oneKey = oneKey;
 			$scope.oneVal = oneVal;
 
-			$scope.register = function (newUser) {
-				// $http.post('register', {}); // ...
-				newUser = newUser;
+			$scope.register = function () {
+
+				$http({
+					url: '/public-api/register',
+					method: 'POST',
+					transformRequest: transformRequestAsFormPost,
+					data: $scope.user
+				}).then(function (resp) {
+					resp = resp;
+				}, function (error) {
+					error = error;
+				});
 			}
 
 			$scope.master = {};
@@ -113,15 +147,8 @@ helloModule
 	      	$scope.reset();
 
 	      	$scope.user = {};
-			$http.get('/public-api/userDetailLabels').then(function (response) {
+			$http.get('/public-api/userDetailLabels', { cache: true }).then(function (response) {
 				$scope.userDetailLabels = response.data;
-				// angular.forEach($scope.userDetailLabels, function (value, key) {
-				// 	// add a blank "no answer" value to each select.
-				// 	value.noAnswer = "";
-
-				// 	// set the initial value of each option to noAnswer.
-				// 	$scope.user[key] = value.noAnswer;
-				// });
 			});
 		}]);
 

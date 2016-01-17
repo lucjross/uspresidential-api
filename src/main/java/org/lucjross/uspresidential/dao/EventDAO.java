@@ -7,7 +7,7 @@ import java.util.Collection;
 /**
  * Created by lucas on 11/23/2014.
  */
-public interface EventDAO extends DAO<Event> {
+public interface EventDAO extends DAO<Event, Integer> {
 
     Collection<Event> getEvents(int president_id);
 

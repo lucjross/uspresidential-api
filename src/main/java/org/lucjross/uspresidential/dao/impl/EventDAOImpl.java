@@ -16,7 +16,7 @@ import java.util.List;
  * Created by lucas on 11/23/2014.
  */
 @Repository
-public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
+public class EventDAOImpl extends AbstractDAO<Event, Integer> implements EventDAO {
 
     private static final String TABLE = "events";
 
