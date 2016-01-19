@@ -1,65 +1,159 @@
-<div><h1>Register</h1></div>
+<div><h1>Registration</h1></div>
 <!-- <div ng-controller="registrationCtrlr"> -->
 <div>
-	<form novalidate class="simple-form">
-		Username: <input type="text" ng-model="user.username" required/><br/>
-		Password: <input type="password" ng-model="user.password" required/><br/>
-		E-mail: <input type="email" ng-model="user.email" required/><br/>
-		<br/>
+	<form name="form" novalidate class="form-horizontal">
+		<div class="form-group has-feedback" ng-class="{'has-error': form.username.$error.nxUsername || isRequiredAndTouched(form.username)}">
+			<label for="username" class="col-sm-2 control-label">Username</label>
+			<div class="col-sm-4">
+				<input type="text" id="username" name="username" class="form-control"
+						ng-model="user.username" ng-required="true" nx-username />
+				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+						ng-show="form.username.$error.nxUsername || isRequiredAndTouched(form.username)"></span>
+			</div>
+			<div class="col-sm-2 help-block" ng-show="isRequiredAndTouched(form.username)">Required</div>
+			<div class="col-sm-2 help-block" ng-show="! isRequiredAndTouched(form.username) && form.username.$error.nxUsername">Unavailable</div>
+		</div>
+		<div class="form-group has-feedback" ng-class="{'has-error': form.password.$error.minlength || isRequiredAndTouched(form.password)}">
+			<label for="password" class="col-sm-2 control-label">Password</label>
+			<div class="col-sm-4">
+				<input type="password" id="password" name="password" class="form-control"
+						ng-model="user.password" ng-required="true" ng-minlength="6" ng-model-options="{debounce: 200}"/>
+				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+						ng-show="form.password.$error.minlength || isRequiredAndTouched(form.password)"></span>
+			</div>
+			<div class="col-sm-2 help-block" ng-show="form.password.$error.minlength || isRequiredAndTouched(form.password)">Minimum 6 characters</div>
+		</div>
+		<div class="form-group has-feedback" ng-class="{'has-error': form.passwordConfirm.$error.nxEqual || isRequiredAndTouched(form.passwordConfirm)}">
+			<label for="passwordConfirm" class="col-sm-2 control-label">Password (confirm)</label>
+			<div class="col-sm-4">
+				<input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control"
+						ng-model="user.passwordConfirm" ng-required="true" nx-equal="user.password" ng-model-options="{debounce: 200}"/>
+				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+						ng-show="form.passwordConfirm.$error.nxEqual || isRequiredAndTouched(form.passwordConfirm)"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback" ng-class="{'has-error': form.email.$error.email || isRequiredAndTouched(form.email)}">
+			<label for="email" class="col-sm-2 control-label">E-mail</label>
+			<div class="col-sm-4">
+				<input type="email" id="email" name="email" class="form-control"
+						ng-model="user.email" ng-required="true" ng-model-options="{debounce: 200}"/>
+				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+						ng-show="form.email.$error.email || isRequiredAndTouched(form.email)"></span>
+			</div>
+			<div class="col-sm-2 help-block" ng-show="form.email.$error.email || isRequiredAndTouched(form.email)">Invalid address</div>
+		</div>
 
 		<div class="alert alert-info">
 			The following fields are optional and help us with research...</a>
 		</div>
 
-		Birthdate: <input type="date" name="birthDate" id="birthDate" ng-model="user.birthDate" placeholder="MM-DD-YYYY" min="1900-01-01"/><br/>
-		Gender: <select name="genderSelect" id="genderSelect" ng-model="user.gender">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.gender" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Political Leaning - Social: <select name="politicsSocialSelect" id="politicsSocialSelect" ng-model="user.politicsSocial">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.politicsSocial" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Political Leaning - Fiscal: <select name="politicsFiscalSelect" id="politicsFiscalSelect" ng-model="user.politicsFiscal">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.politicsFiscal" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Education: <select name="educationSelect" id="educationSelect" ng-model="user.education">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.education" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Occupation: <select name="occupationSelect" id="occupationSelect" ng-model="user.occupation">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.occupation" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Country: <select name="countrySelect" id="countrySelect" ng-model="user.country">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.country" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		<div ng-show="user.country == 'US'">
-			State/Territory: <select name="stateSelect" id="stateSelect" ng-model="user.stateOrTerritory">
-				<option selected></option>
-				<option ng-repeat="entry in userDetailLabels.stateOrTerritory" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-			</select><br/>
+		<div class="form-group">
+			<label for="birthDate" class="col-sm-2 control-label">Birthdate</label>
+			<div class="col-sm-4">
+				<input type="date" name="birthDate" id="birthDate" class="form-control" ng-model="user.birthDate" placeholder="MM-DD-YYYY" min="1900-01-01"/>
+			</div>
 		</div>
-		Religion: <select name="religionSelect" id="religionSelect" ng-model="user.religion">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.religion" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Annual Income: <select name="annualIncomeSelect" id="annualIncomeSelect" ng-model="user.annualIncome">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.annualIncome" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Marital Status: <select name="maritalStatusSelect" id="maritalStatusSelect" ng-model="user.maritalStatus">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.maritalStatus" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
-		Sexuality: <select name="sexualitySelect" id="sexualitySelect" ng-model="user.sexuality">
-			<option selected></option>
-			<option ng-repeat="entry in userDetailLabels.sexuality" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
-		</select><br/>
+		<div class="form-group">
+			<label for="gender" class="col-sm-2 control-label">Gender</label>
+			<div class="col-sm-4">
+				<select id="gender" class="form-control" ng-model="user.gender">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.gender" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="politicsSocial" class="col-sm-2 control-label">Political Leaning - Social</label>
+			<div class="col-sm-4">
+				<select id="politicsSocial" class="form-control" ng-model="user.politicsSocial">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.politicsSocial" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="politicsFiscal" class="col-sm-2 control-label">Political Leaning - Fiscal</label>
+			<div class="col-sm-4">
+				<select id="politicsFiscal" class="form-control" ng-model="user.politicsFiscal">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.politicsFiscal" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="education" class="col-sm-2 control-label">Education</label>
+			<div class="col-sm-4">
+				<select id="education" class="form-control" ng-model="user.education">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.education" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="occupation" class="col-sm-2 control-label">Occupation</label>
+			<div class="col-sm-4">
+				<select id="occupation" class="form-control" ng-model="user.occupation">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.occupation" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="country" class="col-sm-2 control-label">Country</label>
+			<div class="col-sm-4">
+				<select id="country" class="form-control" ng-model="user.country">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.country" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div ng-show="user.country == 'US'" class="form-group">
+			<label for="stateOrTerritory" class="col-sm-2 control-label">State/Territory</label>
+			<div class="col-sm-4">
+				<select id="stateOrTerritory" class="form-control" ng-model="user.stateOrTerritory">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.stateOrTerritory" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="religion" class="col-sm-2 control-label">Religion</label>
+			<div class="col-sm-4">
+				<select id="religion" class="form-control" ng-model="user.religion">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.religion" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="annualIncome" class="col-sm-2 control-label">Annual Income</label>
+			<div class="col-sm-4">
+				<select id="annualIncome" class="form-control" ng-model="user.annualIncome">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.annualIncome" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="maritalStatus" class="col-sm-2 control-label">Marital Status</label>
+			<div class="col-sm-4">
+				<select id="maritalStatus" class="form-control" ng-model="user.maritalStatus">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.maritalStatus" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="sexuality" class="col-sm-2 control-label">Sexuality</label>
+			<div class="col-sm-4">
+				<select id="sexuality" class="form-control" ng-model="user.sexuality">
+					<option selected></option>
+					<option ng-repeat="entry in userDetailLabels.sexuality" value="{{oneKey(entry)}}">{{oneVal(entry)}}</option>
+				</select>
+			</div>
+		</div>
 
-		<input type="button" ng-click="reset()" value="Reset" />
-    	<input type="submit" ng-click="register()" value="Save" />
+		<input type="button" class="btn btn-default" ng-click="reset()" value="Reset" />
+    	<input type="submit" class="btn btn-default" ng-click="register()" value="Save" />
 	</form>
 </div>

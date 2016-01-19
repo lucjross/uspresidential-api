@@ -5,6 +5,8 @@ import org.lucjross.uspresidential.dao.UserDAO;
 import org.lucjross.uspresidential.model.PrezUser;
 import org.lucjross.uspresidential.model.PrezUserOptionalsLabels;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,7 @@ public class UserController {
 
     @Autowired private PrezUserValidator prezUserValidator;
     @Autowired private PrezUserOptionalsValidator prezUserOptionalsValidator;
+    @Autowired private UserDAO userDAO;
 
     @InitBinder("userAttr")
     private void initBinderUser(WebDataBinder webDataBinder) {
@@ -47,6 +50,15 @@ public class UserController {
         webDataBinder.setValidator(prezUserOptionalsValidator);
     }
 
+    /**
+     * Registration POST mapping
+     *
+     * @param userReq
+     * @param userBR
+     * @param userOptionalsReq
+     * @param userOptionalsBR
+     * @return
+     */
     @RequestMapping(value = "/public-api/register", method = RequestMethod.POST)
     public ResponseEntity<String> register(
             @Valid @ModelAttribute("userAttr") PrezUser.Form userReq,
@@ -54,15 +66,23 @@ public class UserController {
             @Valid @ModelAttribute("userOptionalsAttr") PrezUser.Optionals userOptionalsReq,
             BindingResult userOptionalsBR) {
 
-        if (userOptionalsBR.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         if (userBR.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        if (userOptionalsBR.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            userDAO.createFromForm(userReq, userOptionalsReq);
+        }
+        catch (DuplicateKeyException e) {
+            // username taken
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
@@ -71,9 +91,6 @@ public class UserController {
 
         private static final int MINIMUM_PASSWORD_LENGTH = 6;
         private static final EmailValidator emailValidator = new EmailValidator();
-
-        @Autowired
-        private UserDAO userDAO;
 
         @Override
         public boolean supports(Class<?> clazz) {
@@ -97,18 +114,6 @@ public class UserController {
                         new Object[] { MINIMUM_PASSWORD_LENGTH },
                         "The password must be at least [" + MINIMUM_PASSWORD_LENGTH + "] characters in length.");
             }
-
-            // todo - this needs to be part of the service layer
-//            if (errors.getFieldError("username") == null) {
-//                try {
-//                    userDAO.find(u.getUsername());
-//                    // if no exception, then user already exists
-//                    errors.rejectValue("username", "field.taken");
-//                }
-//                catch (IncorrectResultSizeDataAccessException e) {
-//                    // ok to add user
-//                }
-//            }
         }
     }
 
@@ -136,25 +141,25 @@ public class UserController {
             for (Method m : methods) {
                 String methodName = m.getName();
                 if (methodName.startsWith("get")) {
-                    String labelsKey;
+                    Object formVal;
                     try {
-                        labelsKey = (String) m.invoke(optionals);
+                        formVal = m.invoke(optionals);
                     }
                     catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
 
-                    if (labelsKey != null && ! labelsKey.isEmpty()) {
-                        // then a value was supplied and must be validated
-
-                        // "getBirthDate" --> "birthDate"
+                    if (formVal != null) {
                         String fieldName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
-
                         List<Object> pairList = (List<Object>) labels.labels().get(fieldName);
-                        boolean keyFound = pairList.stream().anyMatch(o ->
-                                ((Map<Object, Object>) o).containsKey(labelsKey));
-                        if (! keyFound) {
-                            errors.rejectValue("fieldName", "field.invalid");
+                        if (pairList != null) {
+                            // then the field's value must exist in the enumeration of labels
+
+                            boolean keyFound = pairList.stream().anyMatch(
+                                    o -> ((Map<Object, Object>) o).containsKey(formVal));
+                            if (! keyFound) {
+                                errors.rejectValue("fieldName", "field.invalid");
+                            }
                         }
                     }
                 }

@@ -72,7 +72,8 @@ public class Application extends SpringBootServletInitializer {
                                 "/home.html",
                                 "/login.html",
                                 "/register.html",
-                                "/").permitAll()
+                                "/",
+                                "/fonts/**").permitAll()
                         .antMatchers("/public-api/**").permitAll()
                         .anyRequest().authenticated()
                 .and()

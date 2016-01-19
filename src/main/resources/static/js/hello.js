@@ -1,5 +1,16 @@
 
 var helloModule = angular.module('hello', ['ngRoute']);
+
+/*
+calling order:
+
+1. app.config()
+1. app.run()
+1. directive's compile functions (if they are found in the dom)
+1. app.controller()
+1. directive's link functions (again, if found)
+*/
+
 helloModule.config(function ($routeProvider, $httpProvider) {
 	$routeProvider
 			.when('/', {
@@ -63,12 +74,70 @@ helloModule
 					}
 
 					var value = data[name];
-					buffer.push(encodeURIComponent(name) + "=" + encodeURIComponent(value == null ? "" : value));
+					if (value) {
+						buffer.push(encodeURIComponent(name) + "=" + encodeURIComponent(value));
+					}
 				}
 
 				return buffer.join("&").replace(/%20/g, "+");
 			}
+		})
+		.factory('isRequiredAndTouched', function () {
+			return function (formEl) {
+				return formEl.$touched && formEl.$error.required;
+			}
 		});
+
+helloModule
+.directive('nxEqual', function() {
+    return {
+        require: 'ngModel',
+        restrict: 'A',
+        link: function (scope, elem, attrs, model) {
+            if (! attrs.nxEqual) {
+                console.error('nxEqual expects a model as an argument!');
+                return;
+            }
+
+            scope.$watch(attrs.nxEqual, function (value) {
+                // Only compare values if the second ctrl has a value.
+                if (model.$viewValue !== undefined && model.$viewValue !== '') {
+                    model.$setValidity('nxEqual', value === model.$viewValue);
+                }
+            });
+
+            model.$parsers.push(function (value) {
+                // Mute the nxEqual error if the second ctrl is empty.
+                if (value === undefined || value === '') {
+                    model.$setValidity('nxEqual', true);
+                    return value;
+                }
+                var isValid = value === scope.$eval(attrs.nxEqual);
+                model.$setValidity('nxEqual', isValid);
+                return isValid ? value : undefined;
+            });
+        }
+    };
+})
+.directive('nxUsername', function () {
+	return {
+		require: 'ngModel',
+		restrict: 'A',
+		link: function (scope, elem, attrs, model) {
+			
+			scope.unavailableUsernames = [];
+			scope.$watch('unavailableUsernames', function (newUsernames) {
+				model.$setValidity('nxUsername', (! model.$modelValue) || newUsernames.indexOf(model.$modelValue) === -1);
+			}, true /* use angular.equals, not !== */);
+
+			model.$parsers.push(function (val) {
+				var pass = (! val) || scope.unavailableUsernames.indexOf(val) === -1;
+				model.$setValidity('nxUsername', pass);
+				return pass ? val : undefined;
+			});
+		}
+	};
+});
 
 helloModule
 		.controller('homeCtrlr', function ($scope, $http) {
@@ -114,9 +183,11 @@ helloModule
 				});
 			};
 		}])
-		.controller('registrationCtrlr',
-				['oneKey', 'oneVal', 'transformRequestAsFormPost', '$rootScope', '$scope', '$http', '$location',
-				function (oneKey, oneVal, transformRequestAsFormPost, $rootScope, $scope, $http, $location) {
+		.controller('registrationCtrlr', [
+				'oneKey', 'oneVal', 'transformRequestAsFormPost', 'isRequiredAndTouched',
+				'$rootScope', '$scope', '$http', '$location', '$anchorScroll',
+				function (oneKey, oneVal, transformRequestAsFormPost, isRequiredAndTouched,
+						$rootScope, $scope, $http, $location, $anchorScroll) {
 
 			$http.post('logout', {}).finally(function () {
 				$rootScope.authenticated = false;
@@ -124,8 +195,26 @@ helloModule
 
 			$scope.oneKey = oneKey;
 			$scope.oneVal = oneVal;
+			$scope.isRequiredAndTouched = isRequiredAndTouched;
+			$scope.unavailableUsernames = [];
 
 			$scope.register = function () {
+
+				var firstErrorId = null;
+				if ($scope.form.$invalid) {
+					angular.forEach($scope.form.$error, function (fields) {
+						angular.forEach(fields, function (field) {
+							field.$setTouched();
+
+							// depends on both "id" and "name" having the same value on the element
+							firstErrorId = firstErrorId || field.$name;
+						});
+					});
+
+					$anchorScroll(firstErrorId);
+
+					return;
+				}
 
 				$http({
 					url: '/public-api/register',
@@ -135,7 +224,10 @@ helloModule
 				}).then(function (resp) {
 					resp = resp;
 				}, function (error) {
-					error = error;
+					if (error.status === 409 /* CONFLICT (username exists) */) {
+						$scope.unavailableUsernames.push($scope.form.username.$modelValue);
+						$anchorScroll('username');
+					}
 				});
 			}
 
@@ -151,4 +243,9 @@ helloModule
 				$scope.userDetailLabels = response.data;
 			});
 		}]);
+
+helloModule.run(['$anchorScroll', function ($anchorScroll) {
+	$anchorScroll.yOffset = 50;
+}]);
+
 

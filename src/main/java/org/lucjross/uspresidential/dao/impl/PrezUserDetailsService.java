@@ -1,20 +1,22 @@
-package org.lucjross.uspresidential.dao;
+package org.lucjross.uspresidential.dao.impl;
 
+import org.lucjross.uspresidential.dao.UserDAO;
 import org.lucjross.uspresidential.model.PrezUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by lucas on 1/11/16.
@@ -22,17 +24,64 @@ import java.util.Optional;
 @Service
 public class PrezUserDetailsService extends JdbcDaoImpl implements UserDAO {
 
+    private final NamedParameterJdbcOperations npJdbcOps;
+
     @Autowired
     PrezUserDetailsService(DataSource dataSource) {
         super();
         setUsersByUsernameQuery("select * from users where username = ?");
         setDataSource(dataSource);
+        npJdbcOps = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Transactional
+    private static final String CREATE_SQL =
+            "insert into users (" +
+            "username, password, enabled, email, " +
+            "birthDate, gender, politicsSocial, politicsFiscal, " +
+            "education, occupation, stateOrTerritory, countryAlpha2Code, " +
+            "religion, annualIncome, maritalStatus, sexuality) " +
+            "values (" +
+            ":username, :password, :enabled, :email, " +
+            ":birthDate, :gender, :politicsSocial, :politicsFiscal, " +
+            ":education, :occupation, :stateOrTerritory, :countryAlpha2Code, " +
+            ":religion, :annualIncome, :maritalStatus, :sexuality)";
+
+    private static final String CREATE_AUTHORITY_SQL =
+            "insert into authorities (username, authority) values (?, ?)";
+
+    @Override
+    public void createFromForm(PrezUser.Form userForm, PrezUser.Optionals userOptionalsForm) {
+
+        MapSqlParameterSource source = new MapSqlParameterSource();
+        source.addValue("username", userForm.getUsername());
+
+        String bcryptedPassword = BCrypt.hashpw(userForm.getPassword(), BCrypt.gensalt());
+        userForm.setPassword(null);
+        source.addValue("password", bcryptedPassword);
+        source.addValue("enabled", true);
+        source.addValue("email", userForm.getEmail());
+        source.addValue("birthDate", userOptionalsForm.getBirthDate());
+        source.addValue("gender", userOptionalsForm.getGender());
+        source.addValue("politicsSocial", userOptionalsForm.getPoliticsSocial());
+        source.addValue("politicsFiscal", userOptionalsForm.getPoliticsFiscal());
+        source.addValue("education", userOptionalsForm.getEducation());
+        source.addValue("occupation", userOptionalsForm.getOccupation());
+        source.addValue("stateOrTerritory", userOptionalsForm.getStateOrTerritory());
+        source.addValue("countryAlpha2Code", userOptionalsForm.getCountry());
+        source.addValue("religion", userOptionalsForm.getReligion());
+        source.addValue("annualIncome", userOptionalsForm.getAnnualIncome());
+        source.addValue("maritalStatus", userOptionalsForm.getMaritalStatus());
+        source.addValue("sexuality", userOptionalsForm.getSexuality());
+
+        npJdbcOps.update(CREATE_SQL, source);
+
+        getJdbcTemplate().update(CREATE_AUTHORITY_SQL,
+                userForm.getUsername(), "ROLE_USER");
+    }
+
     @Override
     public void create(PrezUser prezUser) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -49,7 +98,7 @@ public class PrezUserDetailsService extends JdbcDaoImpl implements UserDAO {
 
     @Override
     public PrezUser update(PrezUser prezUser) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -69,9 +118,7 @@ public class PrezUserDetailsService extends JdbcDaoImpl implements UserDAO {
 
                     // nullables
                     PrezUser.Optionals optionals = new PrezUser.Optionals();
-                    java.sql.Date rsBirthDate = rs.getDate("birthDate");
-                    optionals.setBirthDate(
-                            rsBirthDate == null ? null : rsBirthDate.toLocalDate());
+                    optionals.setBirthDate(rs.getDate("birthDate"));
                     optionals.setGender(rs.getString("gender"));
                     optionals.setPoliticsSocial(rs.getString("politicsSocial"));
                     optionals.setPoliticsFiscal(rs.getString("politicsFiscal"));

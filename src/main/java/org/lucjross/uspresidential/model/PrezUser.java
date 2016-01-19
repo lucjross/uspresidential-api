@@ -3,7 +3,6 @@ package org.lucjross.uspresidential.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
@@ -76,7 +75,7 @@ public class PrezUser extends User {
 
     public static class Optionals {
 
-        protected LocalDate birthDate;
+        protected java.util.Date birthDate;
         protected String gender;
         protected String politicsSocial;
         protected String politicsFiscal;
@@ -89,11 +88,11 @@ public class PrezUser extends User {
         protected String maritalStatus;
         protected String sexuality;
 
-        public LocalDate getBirthDate() {
+        public java.util.Date getBirthDate() {
             return birthDate;
         }
 
-        public void setBirthDate(LocalDate birthDate) {
+        public void setBirthDate(java.util.Date birthDate) {
             this.birthDate = birthDate;
         }
 
