@@ -17,7 +17,7 @@
 			<label for="password" class="col-sm-2 control-label">Password</label>
 			<div class="col-sm-4">
 				<input type="password" id="password" name="password" class="form-control"
-						ng-model="user.password" ng-required="true" ng-minlength="6" ng-model-options="{debounce: 200}"/>
+						ng-model="user.password" ng-required="true" ng-minlength="6" ng-model-options="{debounce: 250}"/>
 				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
 						ng-show="form.password.$error.minlength || isRequiredAndTouched(form.password)"></span>
 			</div>
@@ -27,7 +27,7 @@
 			<label for="passwordConfirm" class="col-sm-2 control-label">Password (confirm)</label>
 			<div class="col-sm-4">
 				<input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control"
-						ng-model="user.passwordConfirm" ng-required="true" nx-equal="user.password" ng-model-options="{debounce: 200}"/>
+						ng-model="user.passwordConfirm" ng-required="true" nx-equal="user.password" ng-model-options="{debounce: 250}"/>
 				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
 						ng-show="form.passwordConfirm.$error.nxEqual || isRequiredAndTouched(form.passwordConfirm)"></span>
 			</div>
@@ -36,7 +36,7 @@
 			<label for="email" class="col-sm-2 control-label">E-mail</label>
 			<div class="col-sm-4">
 				<input type="email" id="email" name="email" class="form-control"
-						ng-model="user.email" ng-required="true" ng-model-options="{debounce: 200}"/>
+						ng-model="user.email" ng-required="true" ng-model-options="{debounce: 250}"/>
 				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
 						ng-show="form.email.$error.email || isRequiredAndTouched(form.email)"></span>
 			</div>
