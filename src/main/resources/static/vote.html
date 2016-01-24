@@ -1,0 +1,68 @@
+
+<div class="container">
+    <div><h1>Vote</h1></div>
+    <form name="votingOptionsForm">
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label for="showEventsBySelect">Show Events:</label>
+                <select id="showEventsBySelect" class="form-control"
+                        ng-model="votingOptions.showEventsBy" ng-change="showEventsByFuncs[votingOptions.showEventsBy]()">
+                    <option value="byPresident">By president</option>
+                    <option value="byTimePeriod">By time period</option>
+                    <option value="all">All</option>
+                </select>
+            </div>
+
+            <div class="col-sm-6 form-group" ng-show="votingOptions.showEventsBy === 'byPresident'">
+                <label for="byPresidentSelect">Select President:</label>
+                <select id="byPresidentSelect" class="form-control" ng-model="votingOptions.byPresident">
+                    <option ng-repeat="prez in presidents" value="{{prez.id}}">{{prez.order}}.&nbsp;&nbsp;{{prez.firstname}}&nbsp;{{prez.lastname}}</option>
+                </select>
+            </div>
+
+            <div ng-show="votingOptions.showEventsBy === 'byTimePeriod'">
+                <div class="col-sm-3 form-group">
+                    <label for="byTimePeriodFromInput">From Year (Inclusive):</label>
+                    <input id="byTimePeriodFromInput" class="form-control" placeholder="e.g., 1776"
+                            ng-model="votingOptions.byTimePeriodFrom"/>
+                    <span class="help-block">Optional</span>
+                </div>
+                <div class="col-sm-3 form-group">
+                    <label for="byTimePeriodToInput">To Year (Exclusive):</label>
+                    <input id="byTimePeriodToInput" class="form-control" placeholder="e.g., {{today().getFullYear()}}"
+                            ng-model="votingOptions.byTimePeriodTo"/>
+                    <span class="help-block">Optional</span>
+                </div>
+            </div>
+
+            <div class="col-sm-2 form-group" ng-show="!! votingOptions.showEventsBy">
+                <label for="atRandomBox">Random</label><br/>
+                <input id="atRandomBox" type="checkbox" ng-model="votingOptions.atRandom"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2" ng-show="showStartBtn">
+                <button type="submit" class="btn btn-default btn-block" ng-click="enableCarousel = true; showStartBtn = false">Start</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div ng-show="enableCarousel" style="height: 305px"> <!-- AngularUI Bootstrap -->
+    <uib-carousel no-wrap="true" template-url="template/carousel.html">
+        <uib-slide template-url="template/slide.html" ng-repeat="slide in slides" active="slide.active" index="slide.id">
+            <img ng-src="{{slide.image}}" style="margin:auto;">
+            <div class="carousel-caption">
+                <h4>Slide {{slide.id}}</h4>
+                <p>{{slide.text}}</p>
+            </div>
+        </uib-slide>
+    </uib-carousel>
+</div>
+
+
+
+
+
+

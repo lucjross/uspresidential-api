@@ -10,7 +10,7 @@
     </style>
 </head>
 
-<body ng-app="hello" ng-cloak class="ng-cloak">
+<body ng-app="prezModule" ng-cloak class="ng-cloak">
     <nav class="navbar navbar-default" role="navigation" ng-controller="navigationCtrlr">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" aria-expanded="false"
@@ -25,8 +25,15 @@
         
         <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-click="navCollapsed = true">
             <ul class="nav navbar-nav">
-                <li ng-show="! authenticated"><a href="#/loginPage">login</a></li>
-                <li ng-show="authenticated"><a href="" ng-click="logout()">logout</a></li>
+                <li ng-show="! authenticated" ng-class="{active: activePath == '/login'}">
+                    <a href="#/login">login</a>
+                </li>
+                <li ng-show="authenticated">
+                    <a href="" ng-click="logout()">logout</a>
+                </li>
+                <li ng-show="authenticated" ng-class="{active: activePath == '/vote'}">
+                    <a href="#/vote">vote</a>
+                </li>
             </ul>
         </div>
 
@@ -37,8 +44,8 @@
             <li ng-show="authenticated"><a href="" ng-click="logout()">logout</a></li>
         </ul> -->
     </nav>
-    <div ng-view class="container"></div>
+    <div ng-view></div>
     <script src="js/angular-bootstrap.js" type="text/javascript"></script>
-    <script src="js/hello.js"></script>
+    <script src="js/prezModule.js"></script>
 </body>
 </html>
