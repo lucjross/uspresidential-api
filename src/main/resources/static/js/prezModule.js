@@ -1,5 +1,5 @@
 
-var prezModule = angular.module('prezModule', ['ngRoute', 'ui.bootstrap', 'ngTouch']);
+var prezModule = angular.module('prezModule', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ngAnimate']);
 
 prezModule.constant('RestApiConfig', {
     BASE_URI: "/presidents-api"
