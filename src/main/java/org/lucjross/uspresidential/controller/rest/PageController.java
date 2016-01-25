@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class PageController {
     @Autowired
     private PrezUserOptionalsLabels prezUserOptionalsLabels;
 
-    @RequestMapping("/homePage")
+    @RequestMapping("/home-auth")
     public Map<String, ?> home(Authentication auth) {
 
         PrezUser user = (PrezUser) auth.getPrincipal();

@@ -199,15 +199,14 @@ prezModule
 });
 
 prezModule
-.controller('homeCtrlr', function ($scope, $http) {
-    $http.get('/homePage/').then(function (response) {
+.controller('homeCtrlr', ['$scope', '$http', function ($scope, $http) {
+    $http.get('/home-auth').then(function (response) {
         $scope.user = response.data.user;
     }, null);
-})
+}])
 .controller('navigationCtrlr',
         ['authenticate', '$rootScope', '$scope', '$http', '$location',
         function (authenticate, $rootScope, $scope, $http, $location) {
-
     authenticate();
 
     $scope.logout = function () {
@@ -224,7 +223,7 @@ prezModule
         ['authenticate', '$rootScope', '$scope', '$http', '$location',
         function (authenticate, $rootScope, $scope, $http, $location) {
 
-    $http.post('logout', {}).finally(function () {
+    $http.post('/logout', {}).finally(function () {
         $rootScope.authenticated = false;
     });
 
@@ -250,7 +249,7 @@ prezModule
         function (oneKey, oneVal, transformRequestAsFormPost, isRequiredAndTouched,
                 $rootScope, $scope, $http, $location, $anchorScroll) {
 
-    $http.post('logout', {}).finally(function () {
+    $http.post('/logout', {}).finally(function () {
         $rootScope.authenticated = false;
     });
 
@@ -279,11 +278,18 @@ prezModule
             return;
         }
 
+        // omit "passwordConfirm"
+        var data = angular.copy($scope.user);
+        data.passwordConfirm = undefined;
+
         $http({
             url: '/public-api/register',
             method: 'POST',
+            headers: {
+                'Content-Type': "application/x-www-form-urlencoded; charset=utf-8"
+            },
             transformRequest: transformRequestAsFormPost,
-            data: $scope.user
+            data: data
         }).then(function () {
             $rootScope.registeredAs = $scope.user.username;
 
@@ -366,8 +372,9 @@ prezModule.run([
         $rootScope.activePath = newVal;
     });
 
-    // $templateCache.put("uib/template/carousel/carousel.html", "<div></div>");
-    // $templateCache.put("uib/template/carousel/slide.html", "<div></div>");
+    $rootScope.$on('$routeChangeSuccess', function () {
+        $rootScope.navCollapsed = true;
+    });
 }]);
 
 

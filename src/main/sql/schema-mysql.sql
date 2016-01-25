@@ -20,6 +20,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES'
 -- -----------------------------------------------------
 CREATE SCHEMA `%SCHEMA%` DEFAULT CHARACTER SET utf8
 ;
+
 USE `%SCHEMA%`
 ;
 
