@@ -6,7 +6,7 @@
             <div class="col-sm-4 form-group">
                 <label for="showEventsBySelect">Show Events:</label>
                 <select id="showEventsBySelect" class="form-control"
-                        ng-model="votingOptions.showEventsBy" ng-change="showEventsByFuncs[votingOptions.showEventsBy]()">
+                        ng-model="votingOptions.showEventsBy" ng-change="showEventsByOptions()">
                     <option value="byPresident">By president</option>
                     <option value="byTimePeriod">By time period</option>
                     <option value="all">All</option>
@@ -16,7 +16,7 @@
             <div class="col-sm-6 form-group" ng-show="votingOptions.showEventsBy === 'byPresident'">
                 <label for="byPresidentSelect">Select President:</label>
                 <select id="byPresidentSelect" class="form-control" ng-model="votingOptions.byPresident">
-                    <option ng-repeat="prez in presidents" value="{{prez.id}}">{{prez.order}}.&nbsp;&nbsp;{{prez.firstname}}&nbsp;{{prez.lastname}}</option>
+                    <option ng-repeat="(id, prez) in presidentsById" value="{{id}}">{{prez.order}}.&nbsp;&nbsp;{{prez.firstname}}&nbsp;{{prez.lastname}}</option>
                 </select>
             </div>
 
@@ -35,21 +35,115 @@
                 </div>
             </div>
 
-            <div class="col-sm-2 form-group" ng-show="!! votingOptions.showEventsBy">
-                <label for="atRandomBox">Random</label><br/>
-                <input id="atRandomBox" type="checkbox" ng-model="votingOptions.atRandom"/>
+            <div class="col-sm-2" ng-show="!! votingOptions.showEventsBy">
+                <div class="checkbox disabled">
+                    <label for="atRandomBox">
+                        <input id="atRandomBox" type="checkbox" ng-model="votingOptions.atRandom" disabled/>
+                        Random
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label for="showAlreadyVotedBox">
+                        <input id="showAlreadyVotedBox" type="checkbox" ng-model="votingOptions.showAlreadyVoted"/>
+                        Show already voted
+                    </label>
+                </div>
+                
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-2" ng-show="showStartBtn">
-                <button type="submit" class="btn btn-default btn-block" ng-click="enableCarousel = true; showStartBtn = false">Start</button>
+                <button type="submit" class="btn btn-default btn-block"
+                        ng-click="start()">Start</button>
             </div>
         </div>
     </form>
 </div>
 
-<div ng-show="enableCarousel" style="height: 305px"> <!-- AngularUI Bootstrap -->
+<div ng-show="showEvents">
+    <uib-carousel no-wrap="true" template-url="template/carousel.html">
+        <uib-slide
+                template-url="template/slide.html"
+                ng-repeat="eventAndVote in eventsAndVotes"
+                active="eventAndVote.active">
+
+            <p>
+                {{eventDatesText(eventAndVote.event.start, eventAndVote.event.end)}},
+                President
+                <a ng-href="{{presidentsById[eventAndVote.event.president_id].wiki_link}}" target="_blank">
+                    {{presidentsById[eventAndVote.event.president_id].firstname}} {{presidentsById[eventAndVote.event.president_id].lastname}}</a>
+                (#{{presidentsById[eventAndVote.event.president_id].order}})
+                played a role in this relatively
+                <strong>{{eventImportanceLabels[eventAndVote.event.importance]}}</strong><span ng-show="!! eventAndVote.event.category">,
+                <strong>{{eventCategoryLabels[eventAndVote.event.category]}}</strong></span>
+                event:
+            </p>
+            <p class="lead text-center">{{eventAndVote.event.description}}</p>
+            <p ng-show="!! eventAndVote.event.summary" class="text-muted">{{eventAndVote.event.summary}}</p>
+            <p ng-show="!! eventAndVote.event.wiki_link">
+                <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                Wikipedia has <a ng-href="{{eventAndVote.event.wiki_link}}" target="_blank">more information</a> on this event.
+            </p>
+
+            <hr/>
+
+            <div class="row"><form>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="voteResponseSelect" class="control-label">Do you agree with this decision?</label>
+                        <select id="voteResponseSelect" class="form-control" ng-model="eventAndVote.vote.response">
+                            <option value="YES">{{voteResponseLabels['YES']}}</option>
+                            <option value="NO">{{voteResponseLabels['NO']}}</option>
+                            <option value="UNKNOWN">{{voteResponseLabels['UNKNOWN']}}</option>
+                            <option value="NOT_IMPORTANT">{{voteResponseLabels['NOT_IMPORTANT']}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="voteWeightRating" class="control-label">On a scale of one to ten, what weight would you put on this event?</label>
+                        <br/>
+                        <uib-rating id="voteWeightRating"
+                                template-url="template/rating.html"
+                                ng-model="eventAndVote.vote.voteWeight" ng-model-options="{ debounce: 500 }"
+                                min="1" max="10"
+                                readOnly="!! eventAndVote.isReadOnly"
+                                titles="['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']"
+                                area-labelledby="default-rating"
+                                state-on="'glyphicon-ok-sign'" state-off="'glyphicon-ok-circle'"></uib-rating>
+
+                        <span class="label label-default pull-right"
+                                ng-show="!!eventAndVote.vote.voteWeight">{{eventAndVote.vote.voteWeight}}</span>
+
+                    </div>
+                </div>
+            </form></div>
+
+            <div ng-show="! eventAndVote.posting">
+                <h4 class="text-center text-success" ng-show="(eventAndVote.voteSubmitted || eventAndVote.vote.created) && !eventAndVote.voteUpdated">
+                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                    Vote submitted
+                </h4>
+                <h4 class="text-center text-success" ng-show="eventAndVote.voteUpdated">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    Vote updated
+                </h4>
+            </div>
+        </uib-slide>
+    </uib-carousel>
+    
+</div>
+
+<hr/>
+<div ng-show="showEvents">
+    <pre>
+(debugging)
+{{ eventsAndVotes | json }}</pre>
+</div>
+
+
+<!-- <div ng-show="enableCarousel" style="height: 305px"> --> <!-- AngularUI Bootstrap --> <!--
     <uib-carousel no-wrap="true" template-url="template/carousel.html">
         <uib-slide template-url="template/slide.html" ng-repeat="slide in slides" active="slide.active" index="slide.id">
             <img ng-src="{{slide.image}}" style="margin:auto;">
@@ -59,7 +153,7 @@
             </div>
         </uib-slide>
     </uib-carousel>
-</div>
+</div> -->
 
 
 

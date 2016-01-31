@@ -90,7 +90,7 @@ public class UserController {
     static class PrezUserValidator implements Validator {
 
         private static final int MINIMUM_PASSWORD_LENGTH = 6;
-        private static final EmailValidator emailValidator = new EmailValidator();
+        private static final EmailValidator emailValidator = new EmailValidator(); // from Hibernate
 
         @Override
         public boolean supports(Class<?> clazz) {

@@ -5,5 +5,11 @@
       <secret-storage>master_key</secret-storage>
       <user-name>lucjross</user-name>
     </data-source>
+    <data-source name="MySQL - uspresidential@uspresidential.cvd6syoq3dtp.us-west-1.rds.amazonaws.com" uuid="1974bbde-c269-47c6-b9d0-801585b5f05a">
+      <secret-storage>master_key</secret-storage>
+      <user-name>lucjross</user-name>
+      <schema-pattern>uspresidential.*</schema-pattern>
+      <default-schemas>uspresidential.*</default-schemas>
+    </data-source>
   </component>
 </project>

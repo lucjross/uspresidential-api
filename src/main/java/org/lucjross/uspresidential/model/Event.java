@@ -9,14 +9,12 @@ public class Event implements Serializable {
 
     static final long serialVersionUID = 1L;
 
-    public static final String TABLE = "p_events";
-
     private int id;
     private String description;
     private int president_id;
     private short weight;
-    private String importance;
-    private String category;
+    private Importance importance;
+    private Category category;
     private String summary;
     private java.sql.Date start;
     private java.sql.Date end;
@@ -54,19 +52,19 @@ public class Event implements Serializable {
         this.weight = weight;
     }
 
-    public String getImportance() {
+    public Importance getImportance() {
         return importance;
     }
 
-    public void setImportance(String importance) {
+    public void setImportance(Importance importance) {
         this.importance = importance;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -102,4 +100,53 @@ public class Event implements Serializable {
         this.wiki_link = wiki_link;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Event event = (Event) o;
+
+        return id == event.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+
+    public enum Importance {
+        MAJOR("major"),
+        MINOR("minor")
+        ;
+
+        private final String text;
+
+        Importance(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
+    public enum Category {
+        FOREIGN("foreign policy"),
+        DOMESTIC("domestic policy"),
+        APPOINTMENT("appointment"),
+        MISC("miscellaneous");
+
+        private final String text;
+
+        Category(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
 }

@@ -1,0 +1,13 @@
+.slide-container {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-left: 18%;
+    padding-right: 18%;
+}
+
+.carousel-control .glyphicon-chevron-left,
+.carousel-control .glyphicon-chevron-right {
+  	top: 100px;
+}

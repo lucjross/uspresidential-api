@@ -3,17 +3,15 @@ package org.lucjross.uspresidential.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-/**
- * Created by lucas on 11/24/2014.
- */
 public class Vote implements Serializable {
+
     static final long serialVersionUID = 1L;
 
     private String user_username;
     private int event_id;
-    private String vote;
-    private short weight;
-    private Timestamp timestamp;
+    private Response response;
+    private short voteWeight;
+    private java.sql.Timestamp created;
 
     public String getUser_username() {
         return user_username;
@@ -31,27 +29,46 @@ public class Vote implements Serializable {
         this.event_id = event_id;
     }
 
-    public String getVote() {
-        return vote;
+    public Response getResponse() {
+        return response;
     }
 
-    public void setVote(String vote) {
-        this.vote = vote;
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
-    public short getWeight() {
-        return weight;
+    public short getVoteWeight() {
+        return voteWeight;
     }
 
-    public void setWeight(short weight) {
-        this.weight = weight;
+    public void setVoteWeight(short voteWeight) {
+        this.voteWeight = voteWeight;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getCreated() {
+        return created;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
+    public enum Response {
+
+        YES("Yes"),
+        NO("No"),
+        UNKNOWN("Unsure"),
+        NOT_IMPORTANT("This event isn't important")
+        ;
+
+        private final String text;
+
+        Response(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
     }
 }

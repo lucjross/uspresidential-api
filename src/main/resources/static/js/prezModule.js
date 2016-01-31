@@ -143,6 +143,29 @@ prezModule
 
         return show;
     };
+})
+.factory('eventDatesText', function () {
+    return function (eventStart, eventEnd) {
+        var startYear = eventStart && eventStart.substr(0, eventStart.indexOf('-'));
+        var endYear = eventEnd && eventEnd.substr(0, eventEnd.indexOf('-'));
+        if (startYear && endYear) {
+            if (startYear === endYear) {
+                return "In " + startYear;
+            }
+            else {
+                return "Between " + startYear + " and " + endYear;
+            }
+        }
+        else if (startYear) {
+            return "After " + startYear;
+        }
+        else if (endYear) {
+            return "By " + endYear;
+        }
+        else {
+            return "During the President's term of office"
+        }
+    }
 });
 
 prezModule
@@ -310,29 +333,110 @@ prezModule
     $scope.reset();
 
     $scope.user = {};
-    $http.get('/public-api/userDetailLabels', { cache: true }).then(function (response) {
-        $scope.userDetailLabels = response.data;
+    $http.get('/public-api/userDetailLabels', { cache: true })
+    .then(function (resp) {
+        $scope.userDetailLabels = resp.data;
+    }, function (error) {
+        console.error(error);
     });
 }])
 .controller('voteCtrlr', [
-        '$scope', '$rootScope', '$location', '$http', 'RestApiConfig', 'showStartBtn',
-        function ($scope, $rootScope, $location, $http, RestApiConfig, showStartBtn) {
+        '$scope', '$rootScope', '$location', '$http', 'RestApiConfig', 'showStartBtn', 'eventDatesText',
+        function ($scope, $rootScope, $location, $http, RestApiConfig, showStartBtn, eventDatesText) {
 
     if (! $rootScope.authenticated) {
         $location.path("/login");
         return;
     }
 
-    $scope.votingOptions = {};
+    $scope.eventDatesText = eventDatesText;
 
-    $scope.showEventsByFuncs = {};
-    $scope.showEventsByFuncs.byPresident = function () {
-        $http.get(RestApiConfig.BASE_URI + '/president/list', { cache: true }).then(function (resp) {
-            $scope.presidents = resp.data;
-        });
+    $scope.votingOptions = {};
+    $scope.eventsAndVotes = []; // todo - should be an array of maps:
+
+    var showEventsByOptionFuncs = { // todo - not sure this is needed anymore
+        byPresident: function () {},
+        byTimePeriod: function () {},
+        all: function () {}
+    }
+    $scope.showEventsByOptions = function () {
+        showEventsByOptionFuncs[$scope.votingOptions.showEventsBy]();
     };
-    $scope.showEventsByFuncs.byTimePeriod = function () {};
-    $scope.showEventsByFuncs.all = function () {} // ?
+
+    $scope.getEventsFuncs = {
+        byPresident: function () {
+            var params = {
+                presidentId: $scope.votingOptions.byPresident,
+                getAlreadyVoted: $scope.votingOptions.showAlreadyVoted,
+                offset: 0 // todo - should equal the number of events voted on in the last batch.
+                // if 10 events were obtained last time and 6 were voted on, only 6 more need to be obtained
+                // in order to maintain an in-client collection size of 10 events.
+            };
+            return $http.get(RestApiConfig.BASE_URI + '/event/by-president', { params: params });
+        },
+        byTimePeriod: function () {
+            var params = {
+                startDate: $scope.byTimePeriodFrom,
+                endDate: $scope.byTimePeriodTo,
+                getAlreadyVoted: $scope.votingOptions.showAlreadyVoted,
+                offset: 0 // todo
+            };
+            return $http.get(RestApiConfig.BASE_URI + '/event/for-period', { params: params });
+        },
+        all: function () {} // todo
+    }
+    $scope.start = function () {
+
+        angular.forEach($scope.eventsAndVotes, function (eventAndVote, key) {
+            eventAndVote.deregisterWatch && eventAndVote.deregisterWatch();
+        });
+        $scope.eventsAndVotes = [];
+
+        var promise = $scope.getEventsFuncs[$scope.votingOptions.showEventsBy]();
+        promise.then(function (resp) {
+            angular.forEach(resp.data, function (eventAndVote, key) {
+                eventAndVote.vote = eventAndVote.vote || {};
+
+                eventAndVote.deregisterWatch = $scope.$watch(function () {
+                    return eventAndVote.vote;
+                }, function (newVal, oldVal) {
+                    if (newVal.response && newVal.voteWeight && !angular.equals(newVal, oldVal)) {
+
+                        var voteData = angular.copy(newVal);
+                        voteData.event_id = eventAndVote.event.id;
+
+                        eventAndVote.posting = true;
+
+                        if (!oldVal.response || !oldVal.voteWeight) {
+                            // insert
+
+                            $http.post(RestApiConfig.BASE_URI + '/vote/submit', voteData)
+                            .then(function () {
+                                eventAndVote.voteSubmitted = true;
+                                eventAndVote.posting = false;
+                            }, httpErrorFn);
+                        }
+                        else {
+                            // update
+
+                            $http.post(RestApiConfig.BASE_URI + '/vote/update', voteData)
+                            .then(function () {
+                                eventAndVote.voteUpdated = true;
+                                eventAndVote.posting = false;
+                            }, httpErrorFn);
+                        }
+                    }
+
+                }, true);
+            });
+            $scope.eventsAndVotes = resp.data;
+
+            $scope.showStartBtn = false;
+            $scope.showEvents = true;
+        }, function (error) {
+            console.error(error);
+        });
+    }
 
     $scope.today = function () { return new Date(); };
 
@@ -341,28 +445,33 @@ prezModule
         return $scope.votingOptions;
     }, function (newVal, oldVal) {
         $scope.showStartBtn = showStartBtn(newVal, oldVal);
-        $scope.enableCarousel = false;
+        $scope.showEvents = false;
+        // $scope.enableCarousel = false;
     }, true);
 
-    var slides = $scope.slides = [];
-    var currIndex = 0;
-    $scope.addSlide = function() {
-        var newWidth = 600 + slides.length + 1;
-        slides.push({
-            image: '//lorempixel.com/' + newWidth + '/300',
-            text: ['Nice image','Awesome photograph','That is so cool','I love that'][slides.length % 4],
-            id: currIndex++
-        });
-    };
 
-    for (var i = 0; i < 4; i++) {
-        $scope.addSlide();
+    getAndAssignToScope(RestApiConfig.BASE_URI + '/president/all-by-id', 'presidentsById');
+    getAndAssignToScope('/public-api/voteResponseLabels', 'voteResponseLabels');
+    getAndAssignToScope('/public-api/eventImportanceLabels', 'eventImportanceLabels');
+    getAndAssignToScope('/public-api/eventCategoryLabels', 'eventCategoryLabels');
+
+    function getAndAssignToScope(uri, property) {
+        $http.get(uri, { cache: true })
+        .then(function (resp) {
+            $scope[property] = resp.data;
+        }, function (error) {
+            console.error(error);
+        });
+    }
+
+    function httpErrorFn(error) {
+        console.error(error);
     }
 }]);
 
 prezModule.run([
-        '$anchorScroll', '$rootScope', '$location', '$templateCache',
-        function ($anchorScroll, $rootScope, $location, $templateCache) {
+        '$anchorScroll', '$rootScope', '$location', '$http', '$templateCache',
+        function ($anchorScroll, $rootScope, $location, $http, $templateCache) {
 
     $anchorScroll.yOffset = 50;
 
@@ -374,6 +483,10 @@ prezModule.run([
 
     $rootScope.$on('$routeChangeSuccess', function () {
         $rootScope.navCollapsed = true;
+    });
+
+    $http.get('/template/rating.html').then(function (resp) {
+        $templateCache.put('uib/template/rating/rating.html', resp.data);
     });
 }]);
 

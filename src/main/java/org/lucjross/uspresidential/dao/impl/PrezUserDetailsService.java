@@ -97,7 +97,7 @@ public class PrezUserDetailsService extends JdbcDaoImpl implements UserDAO {
     }
 
     @Override
-    public PrezUser update(PrezUser prezUser) {
+    public int update(PrezUser prezUser) {
         throw new UnsupportedOperationException();
     }
 

@@ -9,7 +9,12 @@ public interface DAO<T, K> {
 
     T find(K id);
 
-    T update(T t);
+    /**
+     *
+     * @param t
+     * @return  number of rows updated
+     */
+    int update(T t);
 
     void delete(K id);
 }

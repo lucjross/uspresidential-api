@@ -9,11 +9,6 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES'
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema presidents
--- -----------------------------------------------------
--- DROP SCHEMA IF EXISTS `%SCHEMA%`
--- ;
 
 -- -----------------------------------------------------
 -- Schema presidents
@@ -83,13 +78,13 @@ CREATE TABLE `%SCHEMA%`.`events` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `description` TEXT NOT NULL,
   `president_id` INT(11) NOT NULL,
-  `weight` TINYINT(4) NOT NULL DEFAULT '0',
-  `importance` ENUM('major','minor') NOT NULL DEFAULT 'minor',
-  `category` ENUM('foreign','domestic','appointment','misc','unassigned') NOT NULL DEFAULT 'unassigned',
-  `summary` TEXT NOT NULL,
-  `start` DATE NULL DEFAULT NULL,
-  `end` DATE NULL DEFAULT NULL,
-  `wiki_link` TEXT NOT NULL,
+  `weight` TINYINT(4) NOT NULL DEFAULT 0,
+  `importance` varchar(16) NOT NULL DEFAULT 'minor',
+  `category` varchar(32) NULL,
+  `summary` TEXT NULL,
+  `start` DATE NULL,
+  `end` DATE NULL,
+  `wiki_link` TEXT NULL,
   primary key (`id`),
   CONSTRAINT `events_ibfk_1`
     FOREIGN KEY (`president_id`)
@@ -103,21 +98,21 @@ CREATE TABLE `%SCHEMA%`.`events` (
 CREATE TABLE `%SCHEMA%`.`votes` (
   `user_username` VARCHAR(50) NOT NULL,
   `event_id` BIGINT(20) UNSIGNED NOT NULL,
-  `vote` ENUM('Yes', 'No', 'Unknown', 'Not important') NOT NULL,
-  `weight` TINYINT(4) NULL,
-  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `response` varchar(32) NOT NULL,
+  `voteWeight` TINYINT(4) NULL,
+  `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX `user_username` (`user_username` ASC),
   INDEX `event_id` (`event_id` ASC),
   CONSTRAINT `vote_TO_event`
     FOREIGN KEY (`event_id`)
     REFERENCES `%SCHEMA%`.`events` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+    ON DELETE CASCADE -- todo - test
+    ON UPDATE CASCADE, -- todo - test
   CONSTRAINT `vote_TO_user`
     FOREIGN KEY (`user_username`)
     REFERENCES `%SCHEMA%`.`users` (`username`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON DELETE CASCADE -- todo - test
+    ON UPDATE CASCADE) -- todo - test
 ;
 
 

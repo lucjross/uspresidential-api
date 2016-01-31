@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.lucjross.uspresidential.TestCase;
 import org.lucjross.uspresidential.model.Event;
+import org.lucjross.uspresidential.model.EventAndVote;
 import org.lucjross.uspresidential.model.President;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,8 +26,8 @@ public class EventDAOTest extends TestCase {
         Assert.assertEquals("desc0", e.getDescription());
         Assert.assertEquals(1, e.getPresident_id());
         Assert.assertEquals(5, e.getWeight());
-        Assert.assertEquals("minor", e.getImportance());
-        Assert.assertEquals("foreign", e.getCategory());
+        Assert.assertEquals(Event.Importance.MINOR, e.getImportance());
+        Assert.assertEquals(Event.Category.FOREIGN, e.getCategory());
         Assert.assertEquals("summary0", e.getSummary());
         Assert.assertEquals(Date.valueOf("1950-1-1"), e.getStart());
         Assert.assertEquals(Date.valueOf("1950-2-2"), e.getEnd());
@@ -35,15 +36,15 @@ public class EventDAOTest extends TestCase {
 
     @Test
     public void testListByPresident() {
-        Collection<Event> guy1Events = eventDAO.getEvents(1);
+        Collection<EventAndVote> guy1Events = eventDAO.getEvents(Integer.MAX_VALUE, 0, true, null, 1);
         Assert.assertEquals(10, guy1Events.size());
 
-        Event e = guy1Events.iterator().next();
+        Event e = guy1Events.iterator().next().getEvent();
         Assert.assertEquals("desc0", e.getDescription());
         Assert.assertEquals(1, e.getPresident_id());
         Assert.assertEquals(5, e.getWeight());
-        Assert.assertEquals("minor", e.getImportance());
-        Assert.assertEquals("foreign", e.getCategory());
+        Assert.assertEquals(Event.Importance.MINOR, e.getImportance());
+        Assert.assertEquals(Event.Category.FOREIGN, e.getCategory());
         Assert.assertEquals("summary0", e.getSummary());
         Assert.assertEquals(Date.valueOf("1950-1-1"), e.getStart());
         Assert.assertEquals(Date.valueOf("1950-2-2"), e.getEnd());

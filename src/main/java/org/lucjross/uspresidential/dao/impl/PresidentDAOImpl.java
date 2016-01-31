@@ -20,16 +20,16 @@ public class PresidentDAOImpl extends AbstractDAO<President, Integer> implements
     @Override
     public President find(Integer id) {
         String sql = "SELECT * FROM " + TABLE + " WHERE id = ?";
-        President president = jdbcTemplate.queryForObject(sql, new Object[] {id}, MAPPER);
+        President president = jdbcOps.queryForObject(sql, new Object[] {id}, MAPPER);
         return president;
     }
 
     @Override
     public List<President> getPresidents() {
         String sql = "SELECT * FROM " + TABLE + " order by `order` asc";
-        List<President> presidents = jdbcTemplate.query(sql, MAPPER);
+        List<President> presidents = jdbcOps.query(sql, MAPPER);
         return presidents;
     }
 
-    private static final RowMapper<President> MAPPER = new BeanPropertyRowMapper<>(President.class, true);
+    static final RowMapper<President> MAPPER = new BeanPropertyRowMapper<>(President.class, true);
 }
