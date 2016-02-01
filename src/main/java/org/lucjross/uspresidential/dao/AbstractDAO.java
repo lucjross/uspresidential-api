@@ -19,24 +19,4 @@ public abstract class AbstractDAO<T, K> implements DAO<T, K> {
     public void setDataSource(DataSource dataSource) {
         this.jdbcOps = new JdbcTemplate(dataSource);
     }
-
-    @Override
-    public void create(T t) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public T find(K id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int update(T t) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void delete(K id) {
-        throw new UnsupportedOperationException();
-    }
 }

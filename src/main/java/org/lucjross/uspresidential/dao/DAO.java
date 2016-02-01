@@ -5,16 +5,24 @@ package org.lucjross.uspresidential.dao;
  */
 public interface DAO<T, K> {
 
-    void create(T t);
+    default void create(T t) {
+        throw new UnsupportedOperationException();
+    }
 
-    T find(K id);
+    default T find(K id) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      *
      * @param t
      * @return  number of rows updated
      */
-    int update(T t);
+    default int update(T t) {
+        throw new UnsupportedOperationException();
+    }
 
-    void delete(K id);
+    default void delete(K id) {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -364,40 +364,48 @@ prezModule
     };
 
     $scope.getEventsFuncs = {
-        byPresident: function () {
+        byPresident: function (offset) {
             var params = {
                 presidentId: $scope.votingOptions.byPresident,
                 getAlreadyVoted: $scope.votingOptions.showAlreadyVoted,
-                offset: 0 // todo - should equal the number of events voted on in the last batch.
-                // if 10 events were obtained last time and 6 were voted on, only 6 more need to be obtained
-                // in order to maintain an in-client collection size of 10 events.
+                offset: offset
             };
             return $http.get(RestApiConfig.BASE_URI + '/event/by-president', { params: params });
         },
-        byTimePeriod: function () {
+        byTimePeriod: function (offset) {
             var params = {
                 startDate: $scope.byTimePeriodFrom,
                 endDate: $scope.byTimePeriodTo,
                 getAlreadyVoted: $scope.votingOptions.showAlreadyVoted,
-                offset: 0 // todo
+                offset: offset // todo
             };
             return $http.get(RestApiConfig.BASE_URI + '/event/for-period', { params: params });
         },
-        all: function () {} // todo
+        all: function (offset) {} // todo
     }
-    $scope.start = function () {
+    $scope.start = function (concat, offset) {
 
-        angular.forEach($scope.eventsAndVotes, function (eventAndVote, key) {
-            eventAndVote.deregisterWatch && eventAndVote.deregisterWatch();
-        });
-        $scope.eventsAndVotes = [];
+        $scope.lastSlideWatchDeregister && $scope.lastSlideWatchDeregister();
 
-        var promise = $scope.getEventsFuncs[$scope.votingOptions.showEventsBy]();
+        if (!concat) {
+            angular.forEach($scope.eventsAndVotes, function (eventAndVote, key) {
+                eventAndVote.watchDeregister && eventAndVote.watchDeregister();
+            });
+            $scope.eventsAndVotes = [];
+        }
+
+        var promise = $scope.getEventsFuncs[$scope.votingOptions.showEventsBy](offset || 0);
         promise.then(function (resp) {
+
+            if (resp.data.length === 0) {
+                // todo - handle "no more events"
+            }
+
             angular.forEach(resp.data, function (eventAndVote, key) {
                 eventAndVote.vote = eventAndVote.vote || {};
+                eventAndVote.voteSubmitted = !!eventAndVote.vote.created;
 
-                eventAndVote.deregisterWatch = $scope.$watch(function () {
+                eventAndVote.watchDeregister = $scope.$watch(function () {
                     return eventAndVote.vote;
                 }, function (newVal, oldVal) {
                     if (newVal.response && newVal.voteWeight && !angular.equals(newVal, oldVal)) {
@@ -429,24 +437,57 @@ prezModule
 
                 }, true);
             });
-            $scope.eventsAndVotes = resp.data;
+            var eavs = $scope.eventsAndVotes = $scope.eventsAndVotes.concat(resp.data);
+
+            var lastEventAndVote = eavs[eavs.length - 1];
+            $scope.lastSlideWatchDeregister = $scope.$watch(function () {
+                return lastEventAndVote.active;
+            }, function (newVal, oldVal) {
+                if (newVal && ! oldVal) {
+                    /*
+                     * i get 10 more events when the user lands on the last event slide.
+                     * if i am showing events already voted on, i simply get more events
+                     * starting at the row number equal to the current events array length,
+                     * since in that case a limitless result set wouldn't change from call to call.
+                     *
+                     * if i am showing only events not voted on, i get more events
+                     * starting at the row number equal to how many events are not voted on.
+                     * (if i have `n` events and `m` are voted on, the next unvoted event
+                     * that has not already been obtained will be at offset `n - m`.)
+                     */
+                    var offset =
+                            $scope.votingOptions.showAlreadyVoted ?
+                            eavs.length :
+                            eavs.filter(function (eventAndVote) {
+                                return !eventAndVote.voteSubmitted;
+                            }).length;
+
+                    $scope.start(true, offset); // recursive
+                }
+            });
 
             $scope.showStartBtn = false;
             $scope.showEvents = true;
-        }, function (error) {
-            console.error(error);
-        });
+
+            // debug
+            for (var i = 0; i < $scope.eventsAndVotes.length; i++) {
+                for (var j = i + 1; j < $scope.eventsAndVotes.length - 1; j++) {
+                    if ($scope.eventsAndVotes[i].event.id === $scope.eventsAndVotes[j].event.id) {
+                        console.warn("dup: ", $scope.eventsAndVotes[i]);
+                    }
+                }
+            }
+
+        }, httpErrorFn); // -- end "got events" logic
     }
 
     $scope.today = function () { return new Date(); };
 
-    var yearRegExp = /^[12][7890]\d{2}$/;
     $scope.$watch(function () {
         return $scope.votingOptions;
     }, function (newVal, oldVal) {
         $scope.showStartBtn = showStartBtn(newVal, oldVal);
         $scope.showEvents = false;
-        // $scope.enableCarousel = false;
     }, true);
 
 

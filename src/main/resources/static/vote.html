@@ -121,7 +121,7 @@
             </form></div>
 
             <div ng-show="! eventAndVote.posting">
-                <h4 class="text-center text-success" ng-show="(eventAndVote.voteSubmitted || eventAndVote.vote.created) && !eventAndVote.voteUpdated">
+                <h4 class="text-center text-success" ng-show="eventAndVote.voteSubmitted && !eventAndVote.voteUpdated">
                     <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
                     Vote submitted
                 </h4>
