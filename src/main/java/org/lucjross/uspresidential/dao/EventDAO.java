@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Created by lucas on 11/23/2014.
+ * Methods that return Lists of EventAndVote instances must use queries ordered by `id`.
+ * This ensures predictable results over multiple queries with different row offsets.
  */
 public interface EventDAO extends DAO<Event, Integer> {
 

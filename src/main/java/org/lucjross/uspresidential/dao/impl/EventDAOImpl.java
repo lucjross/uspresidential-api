@@ -25,7 +25,7 @@ public class EventDAOImpl extends AbstractDAO<Event, Integer> implements EventDA
             "v.user_username,v.event_id,v.response,v.voteWeight,v.created\n";
     private static final String LEFT_JOIN_VOTED = " left join votes v on " +
             "v.user_username = ? and v.event_id = e.id\n";
-    private static final String ORDER_BY = " order by president_id, start\n";
+    private static final String ORDER_BY = " order by e.id\n";
     private static final String LIMIT_OFFSET = " limit ? offset ?\n";
     private static final String AND_NOT_VOTED = " and v.event_id is null\n";
 
@@ -45,14 +45,14 @@ public class EventDAOImpl extends AbstractDAO<Event, Integer> implements EventDA
 
     @Override
     public List<EventAndVote> getEvents(int limit, int offset,
-                                      boolean getAlreadyVoted, String username,
-                                      int president_id) {
+                                        boolean getAlreadyVoted, String username,
+                                        int president_id) {
         List<Object> params = new LinkedList<>();
 
         String sql = "select" + SELECT_LIST + "from" + TABLE + LEFT_JOIN_VOTED;
         params.add(username);
 
-        sql += "where president_id = ? ";
+        sql += "where president_id = ?\n";
         params.add(president_id);
 
         if (! getAlreadyVoted) {
@@ -68,8 +68,8 @@ public class EventDAOImpl extends AbstractDAO<Event, Integer> implements EventDA
 
     @Override
     public List<EventAndVote> getEventsForPeriod(int limit, int offset,
-                                               boolean getAlreadyVoted, String username,
-                                               Optional<java.sql.Date> start, Optional<java.sql.Date> end) {
+                                                 boolean getAlreadyVoted, String username,
+                                                 Optional<java.sql.Date> start, Optional<java.sql.Date> end) {
         List<Object> params = new LinkedList<>();
 
         String sql = "select" + SELECT_LIST + "from" + TABLE + LEFT_JOIN_VOTED;

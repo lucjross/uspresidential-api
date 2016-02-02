@@ -374,10 +374,10 @@ prezModule
         },
         byTimePeriod: function (offset) {
             var params = {
-                startDate: $scope.byTimePeriodFrom,
-                endDate: $scope.byTimePeriodTo,
+                startYear: $scope.votingOptions.byTimePeriodFrom,
+                endYear: $scope.votingOptions.byTimePeriodTo,
                 getAlreadyVoted: $scope.votingOptions.showAlreadyVoted,
-                offset: offset // todo
+                offset: offset
             };
             return $http.get(RestApiConfig.BASE_URI + '/event/for-period', { params: params });
         },
