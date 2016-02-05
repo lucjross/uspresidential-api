@@ -1,3 +1,9 @@
+--
+-- Spring Boot runs this automatically on start
+-- "poor-man's migrations" - fail-fast disabled
+-- https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html#howto-initialize-a-database-using-spring-jdbc
+--
+
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0
 ;

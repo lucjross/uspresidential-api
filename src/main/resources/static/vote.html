@@ -1,6 +1,6 @@
 
 <div class="container">
-    <div><h1>Vote</h1></div>
+    <div><h1>Events</h1></div>
     <form name="votingOptionsForm">
         <div class="row">
             <div class="col-sm-4 form-group">
@@ -61,7 +61,16 @@
     </form>
 </div>
 
+<!-- // tabs // -->
 <div ng-show="showEvents">
+    <uib-tabset justified="true">
+        <uib-tab heading="Vote" active="modes.vote.active" select=""></uib-tab>
+        <uib-tab heading="Stats" active="modes.stats.active" select=""></uib-tab>
+    </uib-tabset>
+</div>
+
+<div ng-show="showEvents">
+    <!-- // carousel // -->
     <uib-carousel no-wrap="true" template-url="template/carousel.html">
         <uib-slide
                 template-url="template/slide.html"
@@ -70,10 +79,9 @@
 
             <p>
                 {{eventDatesText(eventAndVote.event.start, eventAndVote.event.end)}},
-                President
+                {{presidentsById[eventAndVote.event.president_id].order | ordinal}} President of the United States,
                 <a ng-href="{{presidentsById[eventAndVote.event.president_id].wiki_link}}" target="_blank">
-                    {{presidentsById[eventAndVote.event.president_id].firstname}} {{presidentsById[eventAndVote.event.president_id].lastname}}</a>
-                (#{{presidentsById[eventAndVote.event.president_id].order}})
+                    {{presidentsById[eventAndVote.event.president_id].firstname}} {{presidentsById[eventAndVote.event.president_id].lastname}}</a>,
                 played a role in this relatively
                 <strong>{{eventImportanceLabels[eventAndVote.event.importance]}}</strong><span ng-show="!! eventAndVote.event.category">,
                 <strong>{{eventCategoryLabels[eventAndVote.event.category]}}</strong></span>
@@ -88,38 +96,60 @@
 
             <hr/>
 
-            <div class="row"><form>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="voteResponseSelect" class="control-label">Do you agree with this decision?</label>
-                        <select id="voteResponseSelect" class="form-control" ng-model="eventAndVote.vote.response">
-                            <option value="YES">{{voteResponseLabels['YES']}}</option>
-                            <option value="NO">{{voteResponseLabels['NO']}}</option>
-                            <option value="UNKNOWN">{{voteResponseLabels['UNKNOWN']}}</option>
-                            <option value="NOT_IMPORTANT">{{voteResponseLabels['NOT_IMPORTANT']}}</option>
-                        </select>
+            <!-- // vote form // -->
+            <div class="row" ng-show="modes.vote.active">
+                <form>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="voteResponseSelect" class="control-label">Do you agree with this decision?</label>
+                            <select id="voteResponseSelect" class="form-control" ng-model="eventAndVote.vote.response">
+                                <option value="YES">{{voteResponseLabels['YES']}}</option>
+                                <option value="NO">{{voteResponseLabels['NO']}}</option>
+                                <option value="UNKNOWN">{{voteResponseLabels['UNKNOWN']}}</option>
+                                <option value="NOT_IMPORTANT">{{voteResponseLabels['NOT_IMPORTANT']}}</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="voteWeightRating" class="control-label">On a scale of one to ten, what weight would you put on this event?</label>
-                        <br/>
-                        <uib-rating id="voteWeightRating"
-                                template-url="template/rating.html"
-                                ng-model="eventAndVote.vote.voteWeight" ng-model-options="{ debounce: 500 }"
-                                min="1" max="10"
-                                readOnly="!! eventAndVote.isReadOnly"
-                                titles="['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']"
-                                area-labelledby="default-rating"
-                                state-on="'glyphicon-ok-sign'" state-off="'glyphicon-ok-circle'"></uib-rating>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="voteWeightRating" class="control-label">On a scale of one to ten, what weight would you put on this event?</label>
+                            <br/>
+                            <uib-rating id="voteWeightRating"
+                                    ng-model="eventAndVote.vote.voteWeight" ng-model-options="{ debounce: 500 }"
+                                    min="1" max="10"
+                                    readOnly="!! eventAndVote.isReadOnly"
+                                    titles="['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']"
+                                    area-labelledby="default-rating"
+                                    state-on="'glyphicon-ok-sign'" state-off="'glyphicon-ok-circle'"></uib-rating>
 
-                        <span class="label label-default pull-right"
-                                ng-show="!!eventAndVote.vote.voteWeight">{{eventAndVote.vote.voteWeight}}</span>
-
+                            <span class="label label-default pull-right"
+                                    ng-show="!!eventAndVote.vote.voteWeight">{{eventAndVote.vote.voteWeight}}</span>
+                        </div>
                     </div>
-                </div>
-            </form></div>
+                </form>
+            </div>
 
+            <!-- // stats display // -->
+            <div class="row" ng-show="modes.stats.active">
+                <div class="col-sm-9">
+                    <h5>Vote Distribution</h5>
+                    <uib-progress>
+                        <uib-bar value="40" type="success">
+                            <span>40%</span>
+                        </uib-bar>
+                        <uib-bar value="20" type="error">
+                            <span>20%</span>
+                        </uib-bar>
+                    </uib-progress>
+                </div>
+
+                <div class="col-sm-3">
+                    <h5>Average Weight</h5>
+                    <p class="lead">7.3</p>
+                </div>
+            </div>
+
+            <!-- // posted message // -->
             <div ng-show="! eventAndVote.posting">
                 <h4 class="text-center text-success" ng-show="eventAndVote.voteSubmitted && !eventAndVote.voteUpdated">
                     <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
@@ -142,6 +172,54 @@
 {{ eventsAndVotes | json }}</pre>
 </div>
 
+
+
+
+<!-- // template scripts // -->
+
+<script type="text/ng-template" id="uib/template/tabs/tab.html">
+    <li ng-class="{active: active, disabled: disabled}" class="uib-tab">
+        <a href ng-click="select()" uib-tab-heading-transclude>{{heading}}</a>
+    </li>
+</script>
+<script type="text/ng-template" id="uib/template/tabs/tabset.html">
+    <div>
+        <ul class="nav nav-{{type || 'tabs'}}" ng-class="{'nav-stacked': vertical, 'nav-justified': justified}" ng-transclude></ul>
+        <div class="tab-content">
+            <div class="tab-pane" 
+                 ng-repeat="tab in tabs" 
+                 ng-class="{active: tab.active}"
+                 uib-tab-content-transclude="tab">
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="uib/template/rating/rating.html">
+    <span
+            ng-mouseleave="reset()"
+            ng-keydown="onKeydown($event)"
+            tabindex="0"
+            role="slider"
+            aria-valuemin="0"
+            aria-valuemax="{{range.length}}"
+            aria-valuenow="{{value}}">
+        <span ng-repeat-start="r in range track by $index" class="sr-only">({{ $index < value ? '*' : ' ' }})</span>
+        <i
+                ng-repeat-end
+                ng-mouseenter="enter($index + 1)"
+                ng-click="rate($index + 1)"
+                class="glyphicon"
+                ng-class="$index < value && (r.stateOn || 'glyphicon-star') || (r.stateOff || 'glyphicon-star-empty')"
+                ng-attr-title="{{r.title}}"
+                aria-valuetext="{{r.title}}"></i>
+    </span>
+</script>
+<script type="text/ng-template" id="uib/template/progressbar/bar.html">
+    <div class="progress-bar" ng-class="type && 'progress-bar-' + type" role="progressbar" aria-valuenow="{{value}}" aria-valuemin="0" aria-valuemax="{{max}}" ng-style="{width: (percent < 100 ? percent : 100) + '%'}" aria-valuetext="{{percent | number:0}}%" aria-labelledby="{{::title}}" ng-transclude></div>
+</script>
+<script type="text/ng-template" id="uib/template/progressbar/progress.html">
+    <div class="progress" ng-transclude aria-labelledby="{{::title}}"></div>
+</script>
 
 <!-- <div ng-show="enableCarousel" style="height: 305px"> --> <!-- AngularUI Bootstrap --> <!--
     <uib-carousel no-wrap="true" template-url="template/carousel.html">

@@ -9,6 +9,8 @@ spring:
     username: lucjross
     password: password
     platform: mysql
+    test-on-borrow: true
+    validation-query: select 1
     separator: \n;\n
     continue-on-error: true
 

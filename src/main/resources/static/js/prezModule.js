@@ -222,6 +222,24 @@ prezModule
 });
 
 prezModule
+.filter('ordinal', function () {
+    return function (num) {
+        if (num >= 4 && num <= 20)
+            return num + 'th';
+
+        var mod = num % 10;
+        if (mod == 0 || mod >= 4)
+            return num + 'th';
+        else if (mod == 1)
+            return num + 'st';
+        else if (mod == 2)
+            return num + 'nd';
+        else
+            return num + 'rd';
+    }; 
+});
+
+prezModule
 .controller('homeCtrlr', ['$scope', '$http', function ($scope, $http) {
     $http.get('/home-auth').then(function (response) {
         $scope.user = response.data.user;
@@ -352,7 +370,10 @@ prezModule
     $scope.eventDatesText = eventDatesText;
 
     $scope.votingOptions = {};
-    $scope.eventsAndVotes = []; // todo - should be an array of maps:
+    $scope.eventsAndVotes = [];
+    $scope.modes = {
+        vote: { active: true }
+    }; // for the vote/stats tabset
 
     var showEventsByOptionFuncs = { // todo - not sure this is needed anymore
         byPresident: function () {},
@@ -392,6 +413,7 @@ prezModule
                 eventAndVote.watchDeregister && eventAndVote.watchDeregister();
             });
             $scope.eventsAndVotes = [];
+            $scope.stats = {}; // a map of eventIds to statistic objects
         }
 
         var promise = $scope.getEventsFuncs[$scope.votingOptions.showEventsBy](offset || 0);
@@ -401,7 +423,8 @@ prezModule
                 // todo - handle "no more events"
             }
 
-            angular.forEach(resp.data, function (eventAndVote, key) {
+            var newEventsAndVotes = resp.data;
+            angular.forEach(newEventsAndVotes, function (eventAndVote, key) {
                 eventAndVote.vote = eventAndVote.vote || {};
                 eventAndVote.voteSubmitted = !!eventAndVote.vote.created;
 
@@ -478,7 +501,21 @@ prezModule
                 }
             }
 
-        }, httpErrorFn); // -- end "got events" logic
+            // now get the stats for the new events and chain the promise
+            var eventIds = [];
+            angular.forEach(newEventsAndVotes, function (eventAndVote) {
+                eventIds.push(eventAndVote.event.id);
+            });
+
+            return $http.get(RestApiConfig.BASE_URI + '/stats/by-events', { params: { eventIds: eventIds } });
+
+        }, httpErrorFn) // -- end "got events" logic
+        .then(function (resp) {
+
+            var stats = resp.data;
+            angular.forEach(stats, function () {});
+
+        }, httpErrorFn); // -- end "got stats" logic
     }
 
     $scope.today = function () { return new Date(); };
