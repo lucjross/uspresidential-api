@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by lucas on 2/2/16.
  */
-public interface StatsDAO extends DAO<Object, Object> {
+public interface StatsDAO extends DAO<Object> {
 
-    List<Map<String, Object>> getStatsByEvents(List<Integer> eventIds);
+    Map<Number, Map<String, Object>> getStatsByEvents(List<Integer> eventIds);
 }

@@ -17,7 +17,7 @@ import java.util.Optional;
  * Created by lucas on 11/23/2014.
  */
 @Repository
-public class EventDAOImpl extends AbstractDAO<Event, Integer> implements EventDAO {
+public class EventDAOImpl extends AbstractDAO<Event> implements EventDAO {
 
     private static final String TABLE = " events e\n";
     private static final String SELECT_LIST = " e.id,e.description,e.president_id,e.weight,e.importance,e.category," +
@@ -30,7 +30,8 @@ public class EventDAOImpl extends AbstractDAO<Event, Integer> implements EventDA
     private static final String AND_NOT_VOTED = " and v.event_id is null\n";
 
     @Override
-    public Event find(Integer id) {
+    public Event find(Event key) {
+        int id = key.getId();
         String sql = "select * from " + TABLE + " where id = ?";
         Event event = jdbcOps.queryForObject(sql, new Object[] {id}, MAPPER);
         return event;

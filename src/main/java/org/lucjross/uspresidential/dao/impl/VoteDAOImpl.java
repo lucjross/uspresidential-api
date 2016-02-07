@@ -9,15 +9,19 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by lucas on 11/24/2014.
  */
 @Repository
-public class VoteDAOImpl extends AbstractDAO<Vote, Integer> implements VoteDAO {
+public class VoteDAOImpl extends AbstractDAO<Vote> implements VoteDAO {
 
     static final String TABLE = " votes ";
+    static final String GETVOTES_SQL = "select * from" + TABLE + "where event_id in (%s)";
 
     @Override
     public void create(Vote vote) {
@@ -40,28 +44,13 @@ public class VoteDAOImpl extends AbstractDAO<Vote, Integer> implements VoteDAO {
         return jdbcOps.update(sql, o);
     }
 
-    @Override
-    public Collection<Vote> getVotes(Event event) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE event_id = ?";
-        Object[] o = new Object[] {event.getId()};
-        List<Vote> votes = jdbcOps.query(sql, o, MAPPER);
-        return votes;
+    public Map<Integer, List<Vote>> getVotesByEvents(List<Integer> eventIds) {
+        String params = String.join(",", Collections.nCopies(eventIds.size(), "?"));
+        String sql = String.format(GETVOTES_SQL, params);
+        List<Vote> votes = jdbcOps.query(sql, eventIds.toArray(), MAPPER);
+        return votes.stream().collect(Collectors.groupingBy(Vote::getEvent_id));
     }
 
-    @Override
-    public Collection<Vote> getVotes(int event_id, String user_username) {
-        String sql = "select * from " + TABLE + " where event_id = ? and user_username = ?";
-        Object[] o = new Object[] {event_id, user_username};
-        List<Vote> votes = jdbcOps.query(sql, o, MAPPER);
-        return votes;
-    }
-
-    @Override
-    public void delete(String user_username) {
-        String sql = "delete from " + TABLE + " where user_username = ?";
-        Object[] o = new Object[] {user_username};
-        jdbcOps.update(sql, o);
-    }
 
     static final RowMapper<Vote> MAPPER = new BeanPropertyRowMapper<>(Vote.class, true);
 }

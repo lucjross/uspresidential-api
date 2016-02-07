@@ -18,9 +18,10 @@ public class StatsController {
     @Autowired private StatsDAO statsDAO;
 
     @RequestMapping(value = "/by-events", method = RequestMethod.GET)
-    public List<Map<String, Object>> getStatsByEvents(
+    public Map<Number, Map<String, Object>> getStatsByEvents(
             @RequestParam("eventIds") List<Integer> eventIds) {
 
-        return statsDAO.getStatsByEvents(eventIds);
+        Map<Number, Map<String, Object>> stats = statsDAO.getStatsByEvents(eventIds);
+        return stats;
     }
 }

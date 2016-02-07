@@ -29,15 +29,6 @@ public class VoteController {
     @Autowired private VoteDAO voteDAO;
     @Autowired private VoteValidator voteValidator;
 
-    @RequestMapping(value = "/by-event", method = RequestMethod.GET)
-    public Collection<Vote> getVotesByEvent(
-            @RequestParam("event-id") Integer eventID) {
-        Event event = new Event();
-        event.setId(eventID);
-        Collection<Vote> votes = voteDAO.getVotes(event);
-        return votes;
-    }
-
     @InitBinder
     protected void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(voteValidator);
@@ -67,7 +58,6 @@ public class VoteController {
         }
 
         return new ResponseEntity<>(HttpStatus.CREATED);
-        // todo - return new Vote (to provide `created`)
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)

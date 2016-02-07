@@ -4,11 +4,13 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import org.lucjross.uspresidential.RestApiConfig;
 import org.lucjross.uspresidential.dao.AbstractDAO;
 import org.lucjross.uspresidential.dao.EventDAO;
+import org.lucjross.uspresidential.dao.VoteDAO;
 import org.lucjross.uspresidential.model.Event;
 import org.lucjross.uspresidential.model.EventAndVote;
 import org.lucjross.uspresidential.model.President;
 import org.lucjross.uspresidential.model.Vote;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by lucas on 11/24/2014.
@@ -29,26 +32,15 @@ public class EventController {
 
     static final String DEFAULT_LIMIT = "10";
 
-    @Autowired
-    private EventDAO eventDAO;
+    @Autowired private EventDAO eventDAO;
 
-    /**
-     * Returns an event for an event ID.
-     *
-     * @param  id  An event ID
-     * @return  An {@link Event}
-     */
-    @RequestMapping(method=RequestMethod.GET)
-    public Event getEvent(
-            @RequestParam("id") Integer id) {
-        Event event = eventDAO.find(id);
-        return event;
-    }
 
-    @RequestMapping(value="/for-period", method=RequestMethod.GET)
-    @ApiOperation(value="Get events for period",
-            notes="Gets all events that occurred during the given " +
-            "date range. Events missing a start date or end date will be excluded.")
+    @RequestMapping(value = "/for-period", method = RequestMethod.GET)
+    @ApiOperation(value = "Get events for period",
+            notes = "Gets all events that occurred after or within the given start year " +
+                    "and before the given end year, " +
+                    "along with the principal user's vote for that event, if any. " +
+                    "Events missing a start date or end date will be excluded.")
     public List<EventAndVote> getEventsForPeriod(
             Principal principal,
             @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) int limit,
@@ -66,7 +58,7 @@ public class EventController {
         return events;
     }
 
-    @RequestMapping(value="/by-president", method=RequestMethod.GET)
+    @RequestMapping(value = "/by-president", method = RequestMethod.GET)
     public List<EventAndVote> getEventsByPresident(
             Principal principal,
             @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) int limit,

@@ -107,8 +107,6 @@ CREATE TABLE `%SCHEMA%`.`votes` (
   `response` varchar(32) NOT NULL,
   `voteWeight` TINYINT(4) NULL,
   `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX `user_username` (`user_username` ASC),
-  INDEX `event_id` (`event_id` ASC),
   CONSTRAINT `vote_TO_event`
     FOREIGN KEY (`event_id`)
     REFERENCES `%SCHEMA%`.`events` (`id`)
@@ -118,7 +116,8 @@ CREATE TABLE `%SCHEMA%`.`votes` (
     FOREIGN KEY (`user_username`)
     REFERENCES `%SCHEMA%`.`users` (`username`)
     ON DELETE CASCADE -- todo - test
-    ON UPDATE CASCADE) -- todo - test
+    ON UPDATE CASCADE, -- todo - test
+  primary key (user_username, event_id))
 ;
 
 

@@ -28,7 +28,9 @@ public class PresidentController {
     @RequestMapping(method=RequestMethod.GET)
     public President getPresident(
             @RequestParam("id") Integer id) {
-        President president = presidentDAO.find(id);
+        President key = new President();
+        key.setId(id);
+        President president = presidentDAO.find(key);
         return president;
     }
 

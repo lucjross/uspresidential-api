@@ -22,7 +22,9 @@ public class EventDAOTest extends TestCase {
 
     @Test
     public void testGet() {
-        Event e = eventDAO.find(1);
+        Event key = new Event();
+        key.setId(1);
+        Event e = eventDAO.find(key);
         Assert.assertEquals("desc0", e.getDescription());
         Assert.assertEquals(1, e.getPresident_id());
         Assert.assertEquals(5, e.getWeight());

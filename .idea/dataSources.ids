@@ -493,119 +493,124 @@ authority</columns>
         <columns>user_username</columns>
         <desc-columns></desc-columns>
       </index>
-      <foreign-key id="44" parent="5" name="vote_TO_event">
+      <key id="44" parent="5" name="PRIMARY">
+        <columns>user_username
+event_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="45" parent="5" name="vote_TO_event">
         <columns>event_id</columns>
         <ref-key>~.events_v1.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>
-      <foreign-key id="45" parent="5" name="vote_TO_user">
+      <foreign-key id="46" parent="5" name="vote_TO_user">
         <columns>user_username</columns>
         <ref-key>~.users.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>
-      <column id="46" parent="6" name="id">
+      <column id="47" parent="6" name="id">
         <mandatory>1</mandatory>
         <data-type>bigint(20) unsigned</data-type>
       </column>
-      <column id="47" parent="6" name="description">
+      <column id="48" parent="6" name="description">
         <mandatory>1</mandatory>
         <data-type>text</data-type>
       </column>
-      <column id="48" parent="6" name="president_id">
+      <column id="49" parent="6" name="president_id">
         <mandatory>1</mandatory>
         <data-type>int(11)</data-type>
       </column>
-      <column id="49" parent="6" name="weight">
+      <column id="50" parent="6" name="weight">
         <mandatory>1</mandatory>
         <data-type>tinyint(4)</data-type>
         <default-expression>&apos;0&apos;</default-expression>
       </column>
-      <column id="50" parent="6" name="importance">
+      <column id="51" parent="6" name="importance">
         <mandatory>1</mandatory>
         <data-type>enum(&apos;major&apos;, &apos;minor&apos;)</data-type>
         <default-expression>&apos;minor&apos;</default-expression>
       </column>
-      <column id="51" parent="6" name="category">
+      <column id="52" parent="6" name="category">
         <mandatory>1</mandatory>
         <data-type>enum(&apos;foreign&apos;, &apos;domestic&apos;, &apos;appointment&apos;, &apos;misc&apos;, &apos;unassigned&apos;)</data-type>
         <default-expression>&apos;unassigned&apos;</default-expression>
       </column>
-      <column id="52" parent="6" name="summary">
+      <column id="53" parent="6" name="summary">
         <mandatory>1</mandatory>
         <data-type>text</data-type>
       </column>
-      <column id="53" parent="6" name="start">
+      <column id="54" parent="6" name="start">
         <data-type>date</data-type>
       </column>
-      <column id="54" parent="6" name="end">
+      <column id="55" parent="6" name="end">
         <data-type>date</data-type>
       </column>
-      <column id="55" parent="6" name="wiki_link">
+      <column id="56" parent="6" name="wiki_link">
         <mandatory>1</mandatory>
         <data-type>text</data-type>
       </column>
-      <index id="56" parent="6" name="events_ibfk_1">
+      <index id="57" parent="6" name="events_ibfk_1">
         <columns>president_id</columns>
         <desc-columns></desc-columns>
       </index>
-      <key id="57" parent="6" name="PRIMARY">
+      <key id="58" parent="6" name="PRIMARY">
         <columns>id</columns>
         <primary>1</primary>
       </key>
-      <foreign-key id="58" parent="6" name="events_v1_ibfk_1">
+      <foreign-key id="59" parent="6" name="events_v1_ibfk_1">
         <columns>president_id</columns>
         <ref-key>~.presidents.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>
-      <column id="59" parent="7" name="id">
+      <column id="60" parent="7" name="id">
         <mandatory>1</mandatory>
         <data-type>bigint(20) unsigned</data-type>
       </column>
-      <column id="60" parent="7" name="description">
+      <column id="61" parent="7" name="description">
         <mandatory>1</mandatory>
         <data-type>text</data-type>
       </column>
-      <column id="61" parent="7" name="president_id">
+      <column id="62" parent="7" name="president_id">
         <mandatory>1</mandatory>
         <data-type>int(11)</data-type>
       </column>
-      <column id="62" parent="7" name="weight">
+      <column id="63" parent="7" name="weight">
         <mandatory>1</mandatory>
         <data-type>tinyint(4)</data-type>
         <default-expression>&apos;0&apos;</default-expression>
       </column>
-      <column id="63" parent="7" name="importance">
+      <column id="64" parent="7" name="importance">
         <mandatory>1</mandatory>
         <data-type>varchar(16)</data-type>
         <default-expression>&apos;minor&apos;</default-expression>
       </column>
-      <column id="64" parent="7" name="category">
+      <column id="65" parent="7" name="category">
         <data-type>varchar(32)</data-type>
       </column>
-      <column id="65" parent="7" name="summary">
+      <column id="66" parent="7" name="summary">
         <data-type>text</data-type>
       </column>
-      <column id="66" parent="7" name="start">
+      <column id="67" parent="7" name="start">
         <data-type>date</data-type>
       </column>
-      <column id="67" parent="7" name="end">
+      <column id="68" parent="7" name="end">
         <data-type>date</data-type>
       </column>
-      <column id="68" parent="7" name="wiki_link">
+      <column id="69" parent="7" name="wiki_link">
         <data-type>text</data-type>
       </column>
-      <index id="69" parent="7" name="eventsV2_ibfk_1">
+      <index id="70" parent="7" name="eventsV2_ibfk_1">
         <columns>president_id</columns>
         <desc-columns></desc-columns>
       </index>
-      <key id="70" parent="7" name="PRIMARY">
+      <key id="71" parent="7" name="PRIMARY">
         <columns>id</columns>
         <primary>1</primary>
       </key>
-      <foreign-key id="71" parent="7" name="events_ibfk_1">
+      <foreign-key id="72" parent="7" name="events_ibfk_1">
         <columns>president_id</columns>
         <ref-key>~.presidents.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>

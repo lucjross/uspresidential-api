@@ -39,6 +39,14 @@ prezModule.config(function ($routeProvider, $httpProvider) {
 });
 
 prezModule
+.factory('Page', function() {
+    var titleSuffix = " — Presidential Ranker";
+    var title = 'default';
+    return {
+        title: function () { return title; },
+        setTitle: function (newTitle) { title = newTitle + titleSuffix; }
+    };
+})
 .factory('authenticate', ['$rootScope', '$http', function ($rootScope, $http) {
     return function (credentials, callback) {
 
@@ -219,6 +227,30 @@ prezModule
             });
         }
     };
+})
+.directive('nxEventStats', function () {
+    return {
+        restrict: 'A',
+        scope: true, // new child scope that prototypally inherits from the parent scope
+        link: function (scope) {
+
+            /*
+             * statsByEventId is inherited by the ng-repeat for eventsAndVotes, which is on the controller scope;
+             * eventAndVote.event.id is on the scope of the ng-repeat for eventsAndVotes;
+             * scope.stats will be on this directive's scope.
+             */
+
+            function updateStats(newStats) {
+                scope.stats = newStats;
+            }
+
+            updateStats(scope.statsByEventId[scope.eventAndVote.event.id]);
+
+            scope.$watch(function () {
+                return scope.statsByEventId[scope.eventAndVote.event.id];
+            }, updateStats);
+        }
+    };
 });
 
 prezModule
@@ -237,10 +269,19 @@ prezModule
         else
             return num + 'rd';
     }; 
+})
+.filter('percentage', function () {
+    return function (fraction) {
+        return Math.round(fraction * 100);
+    }
 });
 
 prezModule
-.controller('homeCtrlr', ['$scope', '$http', function ($scope, $http) {
+.controller('pageCtrlr', ['$scope', 'Page', function ($scope, Page) {
+    $scope.Page = Page;
+}])
+.controller('homeCtrlr', ['$scope', '$http', 'Page', function ($scope, $http, Page) {
+    Page.setTitle("Home");
     $http.get('/home-auth').then(function (response) {
         $scope.user = response.data.user;
     }, null);
@@ -261,8 +302,10 @@ prezModule
 
 }])
 .controller('loginCtrlr',
-        ['authenticate', '$rootScope', '$scope', '$http', '$location',
-        function (authenticate, $rootScope, $scope, $http, $location) {
+        ['authenticate', '$rootScope', '$scope', '$http', '$location', 'Page',
+        function (authenticate, $rootScope, $scope, $http, $location, Page) {
+
+    Page.setTitle("Login");
 
     $http.post('/logout', {}).finally(function () {
         $rootScope.authenticated = false;
@@ -286,9 +329,11 @@ prezModule
 }])
 .controller('registrationCtrlr', [
         'oneKey', 'oneVal', 'transformRequestAsFormPost', 'isRequiredAndTouched',
-        '$rootScope', '$scope', '$http', '$location', '$anchorScroll',
+        '$rootScope', '$scope', '$http', '$location', '$anchorScroll', 'Page',
         function (oneKey, oneVal, transformRequestAsFormPost, isRequiredAndTouched,
-                $rootScope, $scope, $http, $location, $anchorScroll) {
+                $rootScope, $scope, $http, $location, $anchorScroll, Page) {
+
+    Page.setTitle("Register");
 
     $http.post('/logout', {}).finally(function () {
         $rootScope.authenticated = false;
@@ -359,30 +404,39 @@ prezModule
     });
 }])
 .controller('voteCtrlr', [
-        '$scope', '$rootScope', '$location', '$http', 'RestApiConfig', 'showStartBtn', 'eventDatesText',
-        function ($scope, $rootScope, $location, $http, RestApiConfig, showStartBtn, eventDatesText) {
+        '$scope', '$rootScope', '$location', '$http', '$q', 'RestApiConfig', 'showStartBtn', 'eventDatesText', 'Page',
+        function ($scope, $rootScope, $location, $http, $q, RestApiConfig, showStartBtn, eventDatesText, Page) {
 
     if (! $rootScope.authenticated) {
         $location.path("/login");
         return;
     }
 
-    $scope.eventDatesText = eventDatesText;
+    Page.setTitle("Events");
 
-    $scope.votingOptions = {};
+    var votingOptionsPromises = [getAndAssignToScope(RestApiConfig.BASE_URI + '/president/all-by-id', 'presidentsById')];
+    preLoad(votingOptionsPromises, function () {
+        $scope.votingOptionsDataLoaded = true;
+    })();
+
+    var startPromises = [
+            getAndAssignToScope('/public-api/voteResponseLabels', 'voteResponseLabels'),
+            getAndAssignToScope('/public-api/eventImportanceLabels', 'eventImportanceLabels'),
+            getAndAssignToScope('/public-api/eventCategoryLabels', 'eventCategoryLabels')];
+    preLoad(startPromises, function () {
+        $scope.startDataLoaded = true;
+    })();
+
+    $scope.eventDatesText = eventDatesText;
+    $scope.today = function () { return new Date(); };
+    $scope.votingOptions = {
+        showAlreadyVoted: true
+    };
     $scope.eventsAndVotes = [];
     $scope.modes = {
-        vote: { active: true }
+        vote: { active: true },
+        stats: { active: false }
     }; // for the vote/stats tabset
-
-    var showEventsByOptionFuncs = { // todo - not sure this is needed anymore
-        byPresident: function () {},
-        byTimePeriod: function () {},
-        all: function () {}
-    }
-    $scope.showEventsByOptions = function () {
-        showEventsByOptionFuncs[$scope.votingOptions.showEventsBy]();
-    };
 
     $scope.getEventsFuncs = {
         byPresident: function (offset) {
@@ -403,19 +457,24 @@ prezModule
             return $http.get(RestApiConfig.BASE_URI + '/event/for-period', { params: params });
         },
         all: function (offset) {} // todo
-    }
+    };
+
     $scope.start = function (concat, offset) {
 
         $scope.lastSlideWatchDeregister && $scope.lastSlideWatchDeregister();
 
         if (!concat) {
+            // then the votingOptions were just changed and the carousel should get new content
+
             angular.forEach($scope.eventsAndVotes, function (eventAndVote, key) {
                 eventAndVote.watchDeregister && eventAndVote.watchDeregister();
             });
             $scope.eventsAndVotes = [];
-            $scope.stats = {}; // a map of eventIds to statistic objects
+            $scope.statsByEventId = {}; // a map of eventIds to statistic objects
+            $scope.modes.vote.active = true;
         }
 
+        var mergedEAVs;
         var promise = $scope.getEventsFuncs[$scope.votingOptions.showEventsBy](offset || 0);
         promise.then(function (resp) {
 
@@ -438,31 +497,42 @@ prezModule
 
                         eventAndVote.posting = true;
 
+                        var promise;
                         if (!oldVal.response || !oldVal.voteWeight) {
                             // insert
 
-                            $http.post(RestApiConfig.BASE_URI + '/vote/submit', voteData)
+                            promise = $http.post(RestApiConfig.BASE_URI + '/vote/submit', voteData)
                             .then(function () {
                                 eventAndVote.voteSubmitted = true;
-                                eventAndVote.posting = false;
+                                return $q.resolve();
                             }, httpErrorFn);
                         }
                         else {
                             // update
 
-                            $http.post(RestApiConfig.BASE_URI + '/vote/update', voteData)
+                            promise = $http.post(RestApiConfig.BASE_URI + '/vote/update', voteData)
                             .then(function () {
                                 eventAndVote.voteUpdated = true;
-                                eventAndVote.posting = false;
+                                return $q.resolve();
                             }, httpErrorFn);
                         }
+
+                        // get the updated stats for this event
+                        promise && promise.then(function () {
+                            eventAndVote.posting = false;
+                            return $http.get(RestApiConfig.BASE_URI + '/stats/by-events',
+                                    { params: { eventIds: [eventAndVote.event.id] } });
+                        })
+                        .then(function (resp) {
+                            $scope.statsByEventId[eventAndVote.event.id] = resp.data[eventAndVote.event.id];
+                        }, httpErrorFn);
                     }
 
                 }, true);
             });
-            var eavs = $scope.eventsAndVotes = $scope.eventsAndVotes.concat(resp.data);
+            mergedEAVs = $scope.eventsAndVotes.concat(newEventsAndVotes);
 
-            var lastEventAndVote = eavs[eavs.length - 1];
+            var lastEventAndVote = mergedEAVs[mergedEAVs.length - 1];
             $scope.lastSlideWatchDeregister = $scope.$watch(function () {
                 return lastEventAndVote.active;
             }, function (newVal, oldVal) {
@@ -480,8 +550,8 @@ prezModule
                      */
                     var offset =
                             $scope.votingOptions.showAlreadyVoted ?
-                            eavs.length :
-                            eavs.filter(function (eventAndVote) {
+                            mergedEAVs.length :
+                            mergedEAVs.filter(function (eventAndVote) {
                                 return !eventAndVote.voteSubmitted;
                             }).length;
 
@@ -492,33 +562,26 @@ prezModule
             $scope.showStartBtn = false;
             $scope.showEvents = true;
 
-            // debug
-            for (var i = 0; i < $scope.eventsAndVotes.length; i++) {
-                for (var j = i + 1; j < $scope.eventsAndVotes.length - 1; j++) {
-                    if ($scope.eventsAndVotes[i].event.id === $scope.eventsAndVotes[j].event.id) {
-                        console.warn("dup: ", $scope.eventsAndVotes[i]);
-                    }
-                }
-            }
-
             // now get the stats for the new events and chain the promise
             var eventIds = [];
             angular.forEach(newEventsAndVotes, function (eventAndVote) {
                 eventIds.push(eventAndVote.event.id);
             });
 
-            return $http.get(RestApiConfig.BASE_URI + '/stats/by-events', { params: { eventIds: eventIds } });
+            return $http.get(RestApiConfig.BASE_URI + '/stats/by-events',
+                    { params: { eventIds: eventIds } });
 
-        }, httpErrorFn) // -- end "got events" logic
+        }, httpErrorFn) // -- end "got events" setup
         .then(function (resp) {
 
-            var stats = resp.data;
-            angular.forEach(stats, function () {});
+            angular.merge($scope.statsByEventId, resp.data);
 
-        }, httpErrorFn); // -- end "got stats" logic
-    }
+            // now that the stats are available, set eventsAndVotes.
+            // that way statsByEventId isn't accessed by event id before any event ids are available
+            $scope.eventsAndVotes = mergedEAVs;
 
-    $scope.today = function () { return new Date(); };
+        }, httpErrorFn); // -- end "got stats" setup
+    };
 
     $scope.$watch(function () {
         return $scope.votingOptions;
@@ -528,22 +591,29 @@ prezModule
     }, true);
 
 
-    getAndAssignToScope(RestApiConfig.BASE_URI + '/president/all-by-id', 'presidentsById');
-    getAndAssignToScope('/public-api/voteResponseLabels', 'voteResponseLabels');
-    getAndAssignToScope('/public-api/eventImportanceLabels', 'eventImportanceLabels');
-    getAndAssignToScope('/public-api/eventCategoryLabels', 'eventCategoryLabels');
+
+    function preLoad(promises, success) {
+        return function () {
+            if (promises.length > 0) {
+                promises.shift().then(preLoad(promises, success));
+            }
+            else {
+                success();
+            }
+        };
+    }
 
     function getAndAssignToScope(uri, property) {
-        $http.get(uri, { cache: true })
+        return $http.get(uri, { cache: true })
         .then(function (resp) {
             $scope[property] = resp.data;
-        }, function (error) {
-            console.error(error);
-        });
+            return $q.resolve();
+        }, httpErrorFn);
     }
 
     function httpErrorFn(error) {
         console.error(error);
+        return $q.reject();
     }
 }]);
 
@@ -561,10 +631,6 @@ prezModule.run([
 
     $rootScope.$on('$routeChangeSuccess', function () {
         $rootScope.navCollapsed = true;
-    });
-
-    $http.get('/template/rating.html').then(function (resp) {
-        $templateCache.put('uib/template/rating/rating.html', resp.data);
     });
 }]);
 

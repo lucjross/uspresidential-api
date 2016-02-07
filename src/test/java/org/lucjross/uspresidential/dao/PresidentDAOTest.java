@@ -25,7 +25,9 @@ public class PresidentDAOTest extends TestCase {
 
     @Test
     public void testGet() {
-        President p = presidentDAO.find(1);
+        President key = new President();
+        key.setId(1);
+        President p = presidentDAO.find(key);
         Assert.assertEquals("prez1", p.getLastname());
         Assert.assertEquals("mr1", p.getFirstname());
     }

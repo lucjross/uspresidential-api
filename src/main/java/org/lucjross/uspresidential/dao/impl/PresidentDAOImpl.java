@@ -13,20 +13,13 @@ import java.util.List;
  * Created by lucas on 11/23/2014.
  */
 @Repository
-public class PresidentDAOImpl extends AbstractDAO<President, Integer> implements PresidentDAO {
+public class PresidentDAOImpl extends AbstractDAO<President> implements PresidentDAO {
 
-    static final String TABLE = "presidents";
-
-    @Override
-    public President find(Integer id) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE id = ?";
-        President president = jdbcOps.queryForObject(sql, new Object[] {id}, MAPPER);
-        return president;
-    }
+    static final String TABLE = " presidents ";
 
     @Override
     public List<President> getPresidents() {
-        String sql = "SELECT * FROM " + TABLE + " order by `order` asc";
+        String sql = "select * from" + TABLE + " order by `order`";
         List<President> presidents = jdbcOps.query(sql, MAPPER);
         return presidents;
     }

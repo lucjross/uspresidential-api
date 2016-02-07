@@ -85,7 +85,8 @@ public class PrezUserDetailsService extends JdbcDaoImpl implements UserDAO {
     }
 
     @Override
-    public PrezUser find(String username) {
+    public PrezUser find(PrezUser prezUser) {
+        String username = prezUser.getUsername();
         List<UserDetails> users = loadUsersByUsername(username);
         if (users.size() != 1) {
             throw new IncorrectResultSizeDataAccessException(1);
@@ -102,7 +103,7 @@ public class PrezUserDetailsService extends JdbcDaoImpl implements UserDAO {
     }
 
     @Override
-    public void delete(String username) {
+    public void delete(PrezUser prezUser) {
         throw new UnsupportedOperationException();
     }
 

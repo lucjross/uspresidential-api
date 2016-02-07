@@ -12,13 +12,13 @@ import java.util.Optional;
  * Methods that return Lists of EventAndVote instances must use queries ordered by `id`.
  * This ensures predictable results over multiple queries with different row offsets.
  */
-public interface EventDAO extends DAO<Event, Integer> {
+public interface EventDAO extends DAO<Event> {
 
     List<Event> getAllEvents(int limit, int offset);
 
     List<EventAndVote> getEvents(int limit, int offset,
-                                 boolean getAlreadyVoted, String username,
-                                 int president_id);
+                          boolean getAlreadyVoted, String username,
+                          int president_id);
 
     /**
      *
@@ -31,6 +31,6 @@ public interface EventDAO extends DAO<Event, Integer> {
      * @return
      */
     List<EventAndVote> getEventsForPeriod(int limit, int offset,
-                                          boolean getAlreadyVoted, String username,
-                                          Optional<java.sql.Date> start, Optional<java.sql.Date> end);
+                                   boolean getAlreadyVoted, String username,
+                                   Optional<java.sql.Date> start, Optional<java.sql.Date> end);
 }

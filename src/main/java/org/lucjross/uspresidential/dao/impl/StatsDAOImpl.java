@@ -7,13 +7,15 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by lucas on 2/2/16.
  */
 @Repository
 public class StatsDAOImpl
-        extends AbstractDAO<Object, Object>
+        extends AbstractDAO<Object>
         implements StatsDAO {
 
     private static final String STATS_BY_EVENT_SQL = "select\n" +
@@ -23,14 +25,17 @@ public class StatsDAOImpl
             "  sum(case when votes.response = 'UNKNOWN'        then 1 else 0 end) / count(*) as distribution_UNKNOWN,\n" +
             "  sum(case when votes.response = 'NOT_IMPORTANT'  then 1 else 0 end) / count(*) as distribution_NOT_IMPORTANT,\n" +
             "  sum(votes.voteWeight) / count(*) as avgWeight\n" +
-            "from (select id from events where id in (%s)) _events\n" +
-            "join votes on votes.event_id = _events.id";
+            "from votes\n" +
+            "where event_id in (%s)\n" +
+            "group by event_id";
 
     @Override
-    public List<Map<String, Object>> getStatsByEvents(List<Integer> eventIds) {
+    public Map<Number, Map<String, Object>> getStatsByEvents(List<Integer> eventIds) {
 
         String params = String.join(",", Collections.nCopies(eventIds.size(), "?"));
         String sql = String.format(STATS_BY_EVENT_SQL, params);
-        return jdbcOps.queryForList(sql, eventIds.toArray());
+        List<Map<String, Object>> list = jdbcOps.queryForList(sql, eventIds.toArray());
+        return list.stream().collect(
+                Collectors.toMap(map -> (Number) map.get("event_id"), Function.identity()));
     }
 }

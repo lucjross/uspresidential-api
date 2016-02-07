@@ -1,6 +1,32 @@
+
+html, body {
+	height: 100%;
+	overflow-x: hidden;
+}
+
 body {
-	padding-top: 20px;
-	padding-bottom: 20px;
+	background-color: #511;
+}
+
+.navbar {
+	margin-bottom: auto;
+}
+
+[ng\:view], [ng-view] {
+	padding-top: 10px;
+	height: 100%;
+	background-color: #eee;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+hr {
+	border-color: #ddd;
+}
+
+.container-fluid { /* compensate for ng-view reduced padding */
+	padding-left: 30px;
+	padding-right: 30px;
 }
 
 .slide-container {
@@ -15,4 +41,29 @@ body {
 .carousel-control .glyphicon-chevron-left,
 .carousel-control .glyphicon-chevron-right {
   	top: 100px;
+}
+
+.progress-bar-default {
+	background-color: #777;
+}
+
+.text-progress-bar-success {
+	color: #5cb85c;
+}
+.text-progress-bar-danger {
+	color: #d9534f;
+}
+.text-progress-bar-warning {
+	color: #f0ad4e;
+}
+.text-progress-bar-default {
+	color: #777;
+}
+
+.progress {
+	margin-bottom: 10px;
+}
+
+a[ng-click] {
+    cursor: pointer;
 }

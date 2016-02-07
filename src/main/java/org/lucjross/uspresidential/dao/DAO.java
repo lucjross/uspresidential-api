@@ -3,13 +3,13 @@ package org.lucjross.uspresidential.dao;
 /**
  * Created by lucas on 11/25/2014.
  */
-public interface DAO<T, K> {
+public interface DAO<T> {
 
     default void create(T t) {
         throw new UnsupportedOperationException();
     }
 
-    default T find(K id) {
+    default T find(T t) {
         throw new UnsupportedOperationException();
     }
 
@@ -22,7 +22,7 @@ public interface DAO<T, K> {
         throw new UnsupportedOperationException();
     }
 
-    default void delete(K id) {
+    default void delete(T t) {
         throw new UnsupportedOperationException();
     }
 }

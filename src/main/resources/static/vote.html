@@ -1,12 +1,12 @@
 
-<div class="container">
+<div class="container-fluid">
     <div><h1>Events</h1></div>
     <form name="votingOptionsForm">
         <div class="row">
-            <div class="col-sm-4 form-group">
+            <div class="col-sm-4 form-group" ng-show="votingOptionsDataLoaded">
                 <label for="showEventsBySelect">Show Events:</label>
                 <select id="showEventsBySelect" class="form-control"
-                        ng-model="votingOptions.showEventsBy" ng-change="showEventsByOptions()">
+                        ng-model="votingOptions.showEventsBy">
                     <option value="byPresident">By president</option>
                     <option value="byTimePeriod">By time period</option>
                     <option value="all">All</option>
@@ -53,7 +53,7 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-2" ng-show="showStartBtn">
+            <div class="col-sm-2" ng-show="showStartBtn && startDataLoaded">
                 <button type="submit" class="btn btn-default btn-block"
                         ng-click="start()">Start</button>
             </div>
@@ -62,7 +62,7 @@
 </div>
 
 <!-- // tabs // -->
-<div ng-show="showEvents">
+<div class="container-fluid" ng-show="showEvents">
     <uib-tabset justified="true">
         <uib-tab heading="Vote" active="modes.vote.active" select=""></uib-tab>
         <uib-tab heading="Stats" active="modes.stats.active" select=""></uib-tab>
@@ -130,27 +130,57 @@
             </div>
 
             <!-- // stats display // -->
-            <div class="row" ng-show="modes.stats.active">
+            <div class="row" nx-event-stats ng-show="modes.stats.active && statsByEventId[eventAndVote.event.id]">
                 <div class="col-sm-9">
                     <h5>Vote Distribution</h5>
-                    <uib-progress>
-                        <uib-bar value="40" type="success">
-                            <span>40%</span>
+                    <uib-progress max="1.0" title="Vote Distribution bar" animate="false">
+                        <uib-bar ng-show="stats.distribution_YES > 0" value="stats.distribution_YES" title="{{voteResponseLabels['YES']}}" type="success">
+                            <span>{{stats.distribution_YES | percentage}}%</span>
                         </uib-bar>
-                        <uib-bar value="20" type="error">
-                            <span>20%</span>
+                        <uib-bar ng-show="stats.distribution_NO > 0" value="stats.distribution_NO" title="{{voteResponseLabels['NO']}}" type="danger">
+                            <span>{{stats.distribution_NO | percentage}}%</span>
+                        </uib-bar>
+                        <uib-bar ng-show="stats.distribution_UNKNOWN > 0" value="stats.distribution_UNKNOWN" title="{{voteResponseLabels['UNKNOWN']}}" type="warning">
+                            <span>{{stats.distribution_UNKNOWN | percentage}}%</span>
+                        </uib-bar>
+                        <uib-bar ng-show="stats.distribution_NOT_IMPORTANT > 0" value="stats.distribution_NOT_IMPORTANT" title="{{voteResponseLabels['NOT_IMPORTANT']}}" type="default">
+                            <span>{{stats.distribution_NOT_IMPORTANT | percentage}}%</span>
                         </uib-bar>
                     </uib-progress>
+                    <p>
+                        <small ng-show="stats.distribution_YES > 0">
+                            <span class="glyphicon glyphicon-stop text-progress-bar-success" aria-hidden="true"></span>
+                            {{voteResponseLabels['YES']}}
+                        </small>
+                        <small ng-show="stats.distribution_NO > 0">
+                            <span class="glyphicon glyphicon-stop text-progress-bar-danger" aria-hidden="true"></span>
+                            {{voteResponseLabels['NO']}}
+                        </small>
+                        <small ng-show="stats.distribution_UNKNOWN > 0">
+                            <span class="glyphicon glyphicon-stop text-progress-bar-warning" aria-hidden="true"></span>
+                            {{voteResponseLabels['UNKNOWN']}}
+                        </small>
+                        <small ng-show="stats.distribution_NOT_IMPORTANT > 0">
+                            <span class="glyphicon glyphicon-stop text-progress-bar-default" aria-hidden="true"></span>
+                            {{voteResponseLabels['NOT_IMPORTANT']}}
+                        </small>
+                    </p>
                 </div>
 
                 <div class="col-sm-3">
                     <h5>Average Weight</h5>
-                    <p class="lead">7.3</p>
+                    <p class="lead">{{stats.avgWeight | number: 1 }}</p>
                 </div>
             </div>
 
+            <div ng-show="modes.stats.active && ! statsByEventId[eventAndVote.event.id] && !(eventAndVote.voteSubmitted || eventAndVote.voteUpdated)" class="text-center">
+                <h3>No votes submitted</h3>
+                <p>Be the first to <a ng-click="modes.vote.active = true">vote on this event!</a></p>
+            </div>
+
             <!-- // posted message // -->
-            <div ng-show="! eventAndVote.posting">
+            <div ng-show="! eventAndVote.posting && (eventAndVote.voteSubmitted || eventAndVote.voteUpdated)">
+                <hr/>
                 <h4 class="text-center text-success" ng-show="eventAndVote.voteSubmitted && !eventAndVote.voteUpdated">
                     <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
                     Vote submitted
@@ -163,13 +193,6 @@
         </uib-slide>
     </uib-carousel>
     
-</div>
-
-<hr/>
-<div ng-show="showEvents">
-    <pre>
-(debugging)
-{{ eventsAndVotes | json }}</pre>
 </div>
 
 
@@ -219,6 +242,36 @@
 </script>
 <script type="text/ng-template" id="uib/template/progressbar/progress.html">
     <div class="progress" ng-transclude aria-labelledby="{{::title}}"></div>
+</script>
+<script type="text/ng-template" id="statsTpl">
+    <div class="col-sm-9">
+        <h5>Vote Distribution</h5>
+        <uib-progress max="1.0" title="Vote Distribution bar" animate="false">
+            <uib-bar ng-show="stats.distribution_YES > 0" value="stats.distribution_YES" title="{{voteResponseLabels['YES']}}" type="success">
+                <span>{{stats.distribution_YES | percentage}}%</span>
+            </uib-bar>
+            <uib-bar ng-show="stats.distribution_NO > 0" value="stats.distribution_NO" title="{{voteResponseLabels['NO']}}" type="danger">
+                <span>{{stats.distribution_NO | percentage}}%</span>
+            </uib-bar>
+            <uib-bar ng-show="stats.distribution_UNKNOWN > 0" value="stats.distribution_UNKNOWN" title="{{voteResponseLabels['UNKNOWN']}}" type="warning">
+                <span>{{stats.distribution_UNKNOWN | percentage}}%</span>
+            </uib-bar>
+            <uib-bar ng-show="stats.distribution_NOT_IMPORTANT > 0" value="stats.distribution_NOT_IMPORTANT" title="{{voteResponseLabels['NOT_IMPORTANT']}}" type="default">
+                <span>{{stats.distribution_NOT_IMPORTANT | percentage}}%</span>
+            </uib-bar>
+        </uib-progress>
+        <p>
+            <span ng-show="stats.distribution_YES > 0" class="label label-success">{{voteResponseLabels['YES']}}</span>
+            <span ng-show="stats.distribution_NO > 0" class="label label-danger" >{{voteResponseLabels['NO']}}</span>
+            <span ng-show="stats.distribution_UNKNOWN > 0" class="label label-warning">{{voteResponseLabels['UNKNOWN']}}</span>
+            <span ng-show="stats.distribution_NOT_IMPORTANT > 0" class="label label-default">{{voteResponseLabels['NOT_IMPORTANT']}}</span>
+        </p>
+    </div>
+
+    <div class="col-sm-3">
+        <h5>Average Weight</h5>
+        <p class="lead">{{stats.avgWeight | number: 1 }}</p>
+    </div>
 </script>
 
 <!-- <div ng-show="enableCarousel" style="height: 305px"> --> <!-- AngularUI Bootstrap --> <!--

@@ -1,7 +1,7 @@
 <!doctype html>
-<html>
+<html ng-app="prezModule" ng-controller="pageCtrlr">
 <head>
-    <title>Hello AngularJS</title>
+    <title>{{Page.title()}}</title>
     <link href="css/angular-bootstrap.css" rel="stylesheet"/>
     <link href="css/main.css" rel="stylesheet"/>
     <style type="text/css">
@@ -10,43 +10,41 @@
         }
     </style>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 </head>
 
-<body ng-app="prezModule" ng-cloak class="ng-cloak">
-<div class="container">
-
-    <nav class="navbar navbar-default" role="navigation" ng-controller="navigationCtrlr">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" aria-expanded="false"
-                        ng-init="$root.navCollapsed = true" ng-click="$root.navCollapsed = !$root.navCollapsed">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#/">Presidential Ranker</a>
-            </div>
-            
-            <div class="collapse navbar-collapse" ng-class="(! $root.navCollapsed) && 'in'"> <!-- ng-click="navCollapsed = true"> -->
-                <ul class="nav navbar-nav">
-                    <li ng-show="! authenticated" ng-class="{active: activePath == '/login'}">
-                        <a href="#/login">login</a>
-                    </li>
-                    <li ng-show="authenticated">
-                        <a href="" ng-click="logout()">logout</a>
-                    </li>
-                    <li ng-show="authenticated" ng-class="{active: activePath == '/vote'}">
-                        <a href="#/vote">events</a>
-                    </li>
-                </ul>
-            </div>
+<body ng-cloak class="ng-cloak">
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation" ng-controller="navigationCtrlr">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" aria-expanded="false"
+                    ng-init="$root.navCollapsed = true" ng-click="$root.navCollapsed = !$root.navCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/">Presidential Ranker</a>
         </div>
-    </nav>
+        
+        <div class="collapse navbar-collapse" ng-class="!$root.navCollapsed && 'in'"> <!-- ng-click="navCollapsed = true"> -->
+            <ul class="nav navbar-nav">
+                <li ng-show="! authenticated" ng-class="{active: activePath == '/login'}">
+                    <a href="#/login">login</a>
+                </li>
+                <li ng-show="authenticated">
+                    <a href="" ng-click="logout()">logout</a>
+                </li>
+                <li ng-show="authenticated" ng-class="{active: activePath == '/vote'}">
+                    <a href="#/vote">events</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-    <div ng-view></div>
-
+<div class="row" style="height: 100%">
+    <div ng-view class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12"></div>
 </div>
 </body>
 

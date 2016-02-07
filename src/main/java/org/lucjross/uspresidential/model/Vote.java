@@ -58,7 +58,7 @@ public class Vote implements Serializable {
         YES("Yes"),
         NO("No"),
         UNKNOWN("Unsure"),
-        NOT_IMPORTANT("This event isn't important")
+        NOT_IMPORTANT("Not important")
         ;
 
         private final String text;

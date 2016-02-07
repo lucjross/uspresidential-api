@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 
 @Repository
-public abstract class AbstractDAO<T, K> implements DAO<T, K> {
+public abstract class AbstractDAO<T> implements DAO<T> {
 
     @Autowired protected JdbcOperations jdbcOps;
 }
