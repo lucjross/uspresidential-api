@@ -14,7 +14,6 @@ body {
 
 [ng\:view], [ng-view] {
 	padding-top: 10px;
-	height: 100%;
 	background-color: #eee;
 	padding-left: 0;
 	padding-right: 0;

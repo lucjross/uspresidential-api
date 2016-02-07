@@ -29,9 +29,13 @@ prezModule.config(function ($routeProvider, $httpProvider) {
                 templateUrl: "register.html",
                 controller: 'registrationCtrlr'
             })
-            .when('/vote', {
+            .when('/events', {
                 templateUrl: "vote.html",
                 controller: 'voteCtrlr'
+            })
+            .when('/about', {
+                templateUrl: "about.html",
+                controller: 'aboutCtrlr'
             })
             .otherwise('/');
 
@@ -615,6 +619,9 @@ prezModule
         console.error(error);
         return $q.reject();
     }
+}])
+.controller('aboutCtrlr', [function () {
+
 }]);
 
 prezModule.run([

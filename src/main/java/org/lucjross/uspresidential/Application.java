@@ -75,11 +75,9 @@ public class Application extends SpringBootServletInitializer {
                 .and()
                     .authorizeRequests()
                         .antMatchers(
-                                "/index.html",
-                                "/home.html",
-                                "/login.html",
-                                "/register.html",
+                                "/*.html",
                                 "/",
+                                "/img/**",
                                 "/fonts/**",
                                 "/template/**").permitAll()
                         .antMatchers("/public-api/**").permitAll()
@@ -90,8 +88,6 @@ public class Application extends SpringBootServletInitializer {
                 .and()
                     .addFilter(new BasicAuthenticationFilter(authenticationManager()))
                     .logout();
-//                    .antMatchers("/presidents-api/**").authenticated()
-//                    .and().httpBasic().realmName("presidents-api");
         }
 
         private CsrfTokenRepository csrfTokenRepository() {

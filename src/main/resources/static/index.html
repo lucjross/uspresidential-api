@@ -33,10 +33,13 @@
                     <a href="#/login">login</a>
                 </li>
                 <li ng-show="authenticated">
-                    <a href="" ng-click="logout()">logout</a>
+                    <a ng-click="logout()">logout</a>
                 </li>
                 <li ng-show="authenticated" ng-class="{active: activePath == '/vote'}">
-                    <a href="#/vote">events</a>
+                    <a href="#/events">events</a>
+                </li>
+                <li ng-class="{active: activePath == '/about'}">
+                    <a href="#/about">about</a>
                 </li>
             </ul>
         </div>
