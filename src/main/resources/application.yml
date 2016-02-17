@@ -1,5 +1,5 @@
 server:
-  port: 8002
+  port: 8001
 
 spring:
   datasource:
@@ -9,9 +9,17 @@ spring:
     username: lucjross
     password: password
     platform: mysql
+
+    ### connection validation ###
+    min-idle: 1
     test-on-borrow: true
     validation-query: select 1
+    test-while-idle: true
+    time-between-eviction-runs-millis: 60000
+
     separator: \n;\n
+
+    ### allow schema-mysql.sql to run completely ###
     continue-on-error: true
 
 debug: true

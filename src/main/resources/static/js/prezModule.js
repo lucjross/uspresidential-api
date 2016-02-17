@@ -621,7 +621,7 @@ prezModule
     }
 }])
 .controller('aboutCtrlr', [function () {
-
+    // noop
 }]);
 
 prezModule.run([
@@ -639,6 +639,8 @@ prezModule.run([
     $rootScope.$on('$routeChangeSuccess', function () {
         $rootScope.navCollapsed = true;
     });
+
+    $rootScope.d3 = d3;
 }]);
 
 
